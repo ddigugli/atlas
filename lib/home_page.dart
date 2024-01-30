@@ -1,4 +1,5 @@
 import 'package:atlas/activity_dashboard.dart';
+import 'package:atlas/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -16,7 +17,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ActivityDashboard(),
     Icon(Icons.search), 
     Icon(Icons.fitness_center),
-    Icon(Icons.person)
+    ProfilePage()
   ];
 
   void onTabTapped(int index) {
