@@ -1,5 +1,6 @@
 import 'package:atlas/activity_dashboard.dart';
 import 'package:atlas/profile_page.dart';
+import 'package:atlas/search_page.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -15,7 +16,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _children = const [
     ActivityDashboard(),
-    Icon(Icons.search), 
+    SearchPage(), 
     Icon(Icons.fitness_center),
     ProfilePage()
   ];
