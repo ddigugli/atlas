@@ -1,3 +1,4 @@
+import 'package:atlas/activity_dashboard.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -12,8 +13,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _children = const [
-    Icon(Icons.home),
-    Icon(Icons.search),
+    ActivityDashboard(),
+    Icon(Icons.search), 
     Icon(Icons.fitness_center),
     Icon(Icons.person)
   ];
