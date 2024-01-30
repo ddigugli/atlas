@@ -32,13 +32,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'ATLAS',
-          style: TextStyle(
-            fontFamily: 'Consolas',
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Text(
+          'ATLAS',style: Theme.of(context).textTheme.headlineLarge
         ),
         centerTitle: true,
       ),
@@ -49,8 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: onTabTapped,
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
-        selectedItemColor: Colors.blueAccent,
-        unselectedItemColor: Colors.black12,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

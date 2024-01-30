@@ -17,14 +17,7 @@ class _SearchPageState extends State<SearchPage> {
       
       // App bar that has title for search page
       appBar: AppBar(
-        title: const Text(
-          'Find Friends, Workouts, and Groups',
-          style: TextStyle(
-            fontFamily: 'Consolas',
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text('Find Friends, Workouts, and Groups', style: Theme.of(context).textTheme.titleMedium),
       ),
 
       // Creates body that contains search bar
