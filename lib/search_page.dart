@@ -36,6 +36,7 @@ class _SearchPageState extends State<SearchPage> {
 
             // adds search icon to bar
             leading: const Icon(Icons.search),
+            hintText: 'Search...',
           );
         }, 
 
