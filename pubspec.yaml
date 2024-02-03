@@ -22,9 +22,9 @@ flutter:
   assets:
     - assets/appainter_theme.json
   fonts:
-    - family: Inconsolata
+    - family: Roboto
       fonts:
-        - asset: fonts/Inconsolata-Regular.ttf
+        - asset: fonts/Roboto-Regular.ttf
 
 flutter_icons:
   image_path: "icon/icon.png" 
