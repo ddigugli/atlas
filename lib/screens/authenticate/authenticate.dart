@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:atlas/screens/authenticate/register.dart';
+import 'package:atlas/screens/authenticate/register.dart';
 import 'package:atlas/screens/authenticate/sign_in.dart';
 
 class Authenticate extends StatefulWidget {
@@ -19,10 +19,9 @@ class _AuthenticateState extends State<Authenticate> {
     if (showSignIn) {
       return SignIn(toggleView: toggleView);
     } else {
-      //  return Register(toggleView: toggleView);
       print(
           'IN authenticate.dart, should be registering but just signing in instead');
-      return SignIn(toggleView: toggleView);
+      return Register(toggleView: toggleView);
     }
   }
 }
