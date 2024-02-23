@@ -19,8 +19,30 @@ class AuthService {
   }
 
   // sign in with email and password
-  Future signInWithEmailAndPassword(String email, String password) async {
+  Future signInWithEmailAndPassword(String input, String password) async {
+    String email = input;
+
     try {
+      // Check if the input is a username (doesn't contain "@")
+      if (!input.contains('@')) {
+        // Query your database to find the user document with the matching username
+        // This example assumes you have a 'users' collection and each document has a 'username' field
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('username', isEqualTo: input)
+            .limit(1)
+            .get();
+
+        // If a user is found, use the email associated with that user
+        if (querySnapshot.docs.isNotEmpty) {
+          email = querySnapshot.docs.first.data()['email'];
+        } else {
+          // No user found with the given username
+          return 'User not found';
+        }
+      }
+
+      // Authenticate with the resolved email and the provided password
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
