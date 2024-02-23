@@ -68,7 +68,7 @@ class _SignInState extends State<SignIn> {
               style: const TextStyle(
                   color: Colors.white), // White text for better contrast
               decoration: const InputDecoration(
-                labelText: 'Email',
+                labelText: 'Username or Email',
                 labelStyle:
                     TextStyle(color: Colors.white60), // Lighter text for label
                 border: OutlineInputBorder(),
