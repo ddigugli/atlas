@@ -36,7 +36,8 @@ class MainApp extends StatelessWidget {
       value: FirebaseAuth.instance.authStateChanges(),
       initialData: null,
       child: MaterialApp(
-        home: Wrapper(),
+        home: Wrapper(), 
+        theme: theme
       ),
     );
   }
