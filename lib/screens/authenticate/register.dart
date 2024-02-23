@@ -25,181 +25,75 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return _loading
-        ? Loading() // Make sure the Loading widget exists and is implemented
+        ? Loading()
         : Scaffold(
-            backgroundColor: Colors.grey[900], // Gray background
             appBar: AppBar(
-              title: Text('ATLAS',
-                  style: Theme.of(context).textTheme.headlineLarge),
+              title: Text('ATLAS'),
               centerTitle: true,
             ),
             body: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
-                  // Use SingleChildScrollView to avoid overflow when keyboard appears
                   child: Column(
                     children: <Widget>[
                       const Text(
                         'Create Account',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors
-                                .white), // White text for better contrast on dark background
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        cursorColor:
-                            Colors.blue, // Set the cursor color to blue
-                        style: const TextStyle(
-                            color:
-                                Colors.white), // White text for better contrast
-
+                        cursorColor: Colors.blue,
                         decoration: const InputDecoration(
                           labelText: 'Email',
-                          labelStyle: TextStyle(
-                              color: Colors.white60), // Lighter text for label
                           border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blueGrey), // Custom color for enabled border
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blue), // Change this color to whatever you prefer
-                          ),
-                          prefixIcon: Icon(Icons.mail,
-                              color: Colors.white60), // Icon color
+                          prefixIcon: Icon(Icons.mail),
                         ),
-                        validator: (val) =>
-                            val!.isEmpty ? 'Enter an email' : null,
+                        validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                         onChanged: (val) => setState(() => _email = val),
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        cursorColor:
-                            Colors.blue, // Set the cursor color to blue
-                        style: const TextStyle(
-                            color:
-                                Colors.white), // White text for better contrast
-
+                        cursorColor: Colors.blue,
                         decoration: const InputDecoration(
                           labelText: 'Username',
-                          labelStyle: TextStyle(
-                              color: Colors.white60), // Lighter text for label
                           border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blueGrey), // Custom color for enabled border
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blue), // Change this color to whatever you prefer
-                          ),
-                          prefixIcon: Icon(Icons.person,
-                              color: Colors.white60), // Icon color
+                          prefixIcon: Icon(Icons.person),
                         ),
-                        validator: (val) =>
-                            val!.isEmpty ? 'Enter a username' : null,
+                        validator: (val) => val!.isEmpty ? 'Enter a username' : null,
                         onChanged: (val) => setState(() => _username = val),
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        cursorColor:
-                            Colors.blue, // Set the cursor color to blue
-                        style: const TextStyle(
-                            color:
-                                Colors.white), // White text for better contrast
-
+                        cursorColor: Colors.blue,
                         decoration: const InputDecoration(
                           labelText: 'Full Name',
-                          labelStyle: TextStyle(
-                              color: Colors.white60), // Lighter text for label
                           border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blueGrey), // Custom color for enabled border
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blue), // Change this color to whatever you prefer
-                          ),
-                          prefixIcon: Icon(Icons.person_2,
-                              color: Colors.white60), // Icon color
+                          prefixIcon: Icon(Icons.person),
                         ),
-                        validator: (val) =>
-                            val!.isEmpty ? 'Enter your full name' : null,
+                        validator: (val) => val!.isEmpty ? 'Enter your full name' : null,
                         onChanged: (val) => setState(() => _fullName = val),
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        cursorColor:
-                            Colors.blue, // Set the cursor color to blue
-                        style: const TextStyle(
-                            color:
-                                Colors.white), // White text for better contrast
-
+                        cursorColor: Colors.blue,
                         decoration: const InputDecoration(
                           labelText: 'Password',
-                          labelStyle: TextStyle(
-                              color: Colors.white60), // Lighter text for label
                           border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blueGrey), // Custom color for enabled border
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors
-                                    .blue), // Change this color to whatever you prefer
-                          ),
-                          prefixIcon: Icon(Icons.lock,
-                              color: Colors.white60), // Icon color
+                          prefixIcon: Icon(Icons.lock),
                         ),
                         obscureText: true,
-                        validator: (val) => val!.length < 6
-                            ? 'Password must be at least 6 characters'
-                            : null,
+                        validator: (val) => val!.length < 6 ? 'Password must be at least 6 characters' : null,
                         onChanged: (val) => setState(() => _password = val),
                       ),
-                      SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue[800], // Normal state color
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
-                        ).copyWith(
-                          overlayColor:
-                              MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.pressed)) {
-                                return Colors
-                                    .grey; // Color when the button is pressed
-                              }
-                              return null; // Use the default overlay color (transparent) in other states
-                            },
-                          ),
-                        ),
-                        child: Text('Register',
-                            style: TextStyle(color: Colors.white)),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() => _loading = true);
-                            dynamic result =
-                                await _auth.registerWithEmailAndPassword(
-                                    _email,
-                                    _password,
-                                    _username,
-                                    _fullName); // Pass _username and _fullName to your method
+                            dynamic result = await _auth.registerWithEmailAndPassword(
+                                _email, _password, _username, _fullName);
                             if (result == null) {
                               setState(() {
                                 _error = 'Please supply a valid email';
@@ -208,17 +102,16 @@ class _RegisterState extends State<Register> {
                             }
                           }
                         },
+                        child: const Text('Register'),
                       ),
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                       Text(
                         _error,
                         style: TextStyle(color: Colors.red, fontSize: 14.0),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(
-                            top: 1.0), // Adjust the padding as needed
-                        child: Divider(
-                            color: Colors.grey), // Thin gray separation line
+                        padding: EdgeInsets.only(top: 1.0),
+                        child: Divider(color: Colors.grey),
                       ),
                       TextButton(
                         onPressed: () {
@@ -227,7 +120,6 @@ class _RegisterState extends State<Register> {
                         child: RichText(
                           text: const TextSpan(
                             text: 'Have an account? ',
-                            style: TextStyle(color: Colors.white),
                             children: <TextSpan>[
                               TextSpan(
                                   text: 'Sign in',

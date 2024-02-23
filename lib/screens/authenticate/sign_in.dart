@@ -43,9 +43,8 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900], // Gray background
       appBar: AppBar(
-        title: Text('ATLAS', style: Theme.of(context).textTheme.headlineLarge),
+        title: Text('ATLAS'),
         centerTitle: true,
       ),
       body: Container(
@@ -55,68 +54,30 @@ class _SignInState extends State<SignIn> {
           children: <Widget>[
             const Text(
               'Welcome!',
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors
-                      .white), // White text for better contrast on dark background
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             TextField(
-              cursorColor: Colors.blue, // Set the cursor color to blue
               controller: _emailController,
-              style: const TextStyle(
-                  color: Colors.white), // White text for better contrast
               decoration: const InputDecoration(
                 labelText: 'Username or Email',
-                labelStyle:
-                    TextStyle(color: Colors.white60), // Lighter text for label
                 border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color:
-                          Colors.blueGrey), // Custom color for enabled border
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors
-                          .blue), // Change this color to whatever you prefer
-                ),
-                prefixIcon:
-                    Icon(Icons.email, color: Colors.white60), // Icon color
+                prefixIcon: Icon(Icons.email),
               ),
             ),
             const SizedBox(height: 10),
             TextField(
-              cursorColor: Colors.blue, // Set the cursor color to blue
               controller: _passwordController,
-              style: const TextStyle(
-                  color: Colors.white), // White text for better contrast
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Password',
-                labelStyle:
-                    TextStyle(color: Colors.white60), // Lighter text for label
                 border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color:
-                          Colors.blueGrey), // Custom color for enabled border
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors
-                          .blue), // Change this color to whatever you prefer
-                ),
-                prefixIcon:
-                    Icon(Icons.lock, color: Colors.white60), // Icon color
+                prefixIcon: Icon(Icons.lock),
               ),
             ),
             if (_errorMessage.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(
-                    top:
-                        20.0), // Add 20 pixels of padding above the Text widget
+                padding: const EdgeInsets.only(top: 20.0),
                 child: Text(
                   _errorMessage,
                   style: const TextStyle(color: Colors.red),
@@ -124,27 +85,12 @@ class _SignInState extends State<SignIn> {
               ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _signIn, // Your sign-in method
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue[800], // Normal state color
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              ).copyWith(
-                overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                  (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
-                      return Colors.grey; // Color when the button is pressed
-                    }
-                    return null; // Use the default overlay color (transparent) in other states
-                  },
-                ),
-              ),
-              child:
-                  const Text('Sign In', style: TextStyle(color: Colors.white)),
+              onPressed: _signIn,
+              child: const Text('Sign In'),
             ),
             const Padding(
-              padding:
-                  EdgeInsets.only(top: 20.0), // Adjust the padding as needed
-              child: Divider(color: Colors.grey), // Thin gray separation line
+              padding: EdgeInsets.only(top: 20.0),
+              child: Divider(),
             ),
             TextButton(
               onPressed: () {
@@ -156,8 +102,9 @@ class _SignInState extends State<SignIn> {
                   style: TextStyle(color: Colors.white),
                   children: <TextSpan>[
                     TextSpan(
-                        text: 'Register Now',
-                        style: TextStyle(color: Colors.blue)),
+                      text: 'Register Now',
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   ],
                 ),
               ),
