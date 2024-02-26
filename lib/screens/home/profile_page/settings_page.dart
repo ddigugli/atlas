@@ -33,7 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 // Add sign out functionality
                 // Call signOut method from AuthService
                 AuthService().signOut();
-                // Navigate to the sign-in page
+                Navigator.pop(context);
               },
             ),
           ],

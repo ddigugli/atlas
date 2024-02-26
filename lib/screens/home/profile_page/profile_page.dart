@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'settings_page.dart';
+import 'package:atlas/models/user.dart';
+import 'package:provider/provider.dart';
 
 // Profile Page
 class ProfilePage extends StatefulWidget {
@@ -12,6 +14,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    //Get AtlasUser
+    final atlasUser = Provider.of<AtlasUser?>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -36,52 +41,35 @@ class _ProfilePageState extends State<ProfilePage> {
       body: ListView(
         children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Row(
+            Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-                  child: CircleAvatar(
+                  padding:
+                      const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                  child: const CircleAvatar(
                     radius: 50,
                     backgroundImage: NetworkImage(
-                        "https://image-cdn.essentiallysports.com/wp-content/uploads/arnold-schwarzenegger-volume-workout-1110x788.jpg"), // replace with user's profile picture
+                        "https://image-cdn.essentiallysports.com/wp-content/uploads/arnold-schwarzenegger-volume-workout-1110x788.jpg"), // Ideally, replace with user's profile picture
                   ),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 15.0),
-                    Text('Arnold Schwarzenegger',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold)),
-                    Text('@arnold',
-                        style: TextStyle(
-                            fontSize: 15.0, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 5.0),
-                    Row(children: [
-                      Column(
-                        children: [
-                          Text('1'),
-                          Text('Workouts',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      SizedBox(width: 20.0),
-                      Column(
-                        children: [
-                          Text('1M'),
-                          Text('Followers',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      SizedBox(width: 20.0),
-                      Column(
-                        children: [
-                          Text('100'),
-                          Text('Following',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
+                    const SizedBox(height: 15.0),
+                    Text(
+                      '${atlasUser?.firstName ?? "First"} ${atlasUser?.lastName ?? "Last"}',
+                      style: const TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '@${atlasUser?.username ?? "username"}',
+                      style: const TextStyle(
+                          fontSize: 15.0, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5.0),
+                    Row(children: const [
+                      // Your existing widgets
                     ])
                   ],
                 ),

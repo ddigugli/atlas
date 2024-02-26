@@ -6,16 +6,37 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // create user obj based on firebase user
-  AtlasUser? _userFromFirebaseUser(User? user) {
-    return user != null ? AtlasUser(uid: user.uid) : null;
+  Future<AtlasUser?> _userFromFirebaseUser(User? user) async {
+    if (user == null) {
+      return null;
+    }
+
+    // Fetch user details from Firestore
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (userDoc.exists) {
+      Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
+      return AtlasUser(
+        uid: user.uid,
+        email: data['email'] ?? '',
+        firstName: data['firstName'] ?? '',
+        lastName: data['lastName'] ?? '',
+        username: data['username'] ?? '',
+      );
+    } else {
+      // Handle the case where the user document does not exist (should not happen normally)
+      return null;
+    }
   }
 
   // auth change user stream
-  Stream<AtlasUser?> get user {
-    return _auth
-        .authStateChanges()
-        //.map((FirebaseUser user) => _userFromFirebaseUser(user));
-        .map(_userFromFirebaseUser);
+  Stream<AtlasUser?> get atlasUser {
+    return _auth.authStateChanges().asyncMap((User? user) async {
+      return await _userFromFirebaseUser(user);
+    });
   }
 
   // sign in with email and password
@@ -46,7 +67,7 @@ class AuthService {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      return _userFromFirebaseUser(user);
+      return await _userFromFirebaseUser(user);
     } catch (error) {
       print(error.toString());
       return null;
@@ -100,7 +121,7 @@ class AuthService {
         });
       }
 
-      return _userFromFirebaseUser(user);
+      return await _userFromFirebaseUser(user);
     } catch (error) {
       print(error.toString());
       return null;
