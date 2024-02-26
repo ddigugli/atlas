@@ -1,5 +1,5 @@
 class AtlasUser {
-  final String uid;
+  final String uid; //document ref ID.
   final String email;
   final String firstName;
   final String lastName;
