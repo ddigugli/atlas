@@ -1,11 +1,15 @@
 class AtlasUser {
   final String uid;
-  AtlasUser({required this.uid});
-}
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String username;
 
-class UserData {
-  final String uid;
-  final String name;
-  UserData({required this.uid, required this.name});
-  //Some sort of bank of workouts
+  AtlasUser({
+    required this.uid,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+  });
 }

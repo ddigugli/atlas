@@ -24,6 +24,7 @@ class _SignInState extends State<SignIn> {
     try {
       var result = await _auth.signInWithEmailAndPassword(email, password);
       if (result != null) {
+        print(result.uid);
         print('Sign in successful.');
       } else {
         setState(() {

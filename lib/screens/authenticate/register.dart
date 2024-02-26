@@ -32,7 +32,8 @@ class _RegisterState extends State<Register> {
               centerTitle: true,
             ),
             body: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
@@ -40,7 +41,8 @@ class _RegisterState extends State<Register> {
                     children: <Widget>[
                       const Text(
                         'Create Account',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
@@ -50,7 +52,8 @@ class _RegisterState extends State<Register> {
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.mail),
                         ),
-                        validator: (val) => val!.isEmpty ? 'Enter an email' : null,
+                        validator: (val) =>
+                            val!.isEmpty ? 'Enter an email' : null,
                         onChanged: (val) => setState(() => _email = val),
                       ),
                       const SizedBox(height: 20.0),
@@ -61,7 +64,8 @@ class _RegisterState extends State<Register> {
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person),
                         ),
-                        validator: (val) => val!.isEmpty ? 'Enter a username' : null,
+                        validator: (val) =>
+                            val!.isEmpty ? 'Enter a username' : null,
                         onChanged: (val) => setState(() => _username = val),
                       ),
                       const SizedBox(height: 20.0),
@@ -72,7 +76,8 @@ class _RegisterState extends State<Register> {
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person),
                         ),
-                        validator: (val) => val!.isEmpty ? 'Enter your full name' : null,
+                        validator: (val) =>
+                            val!.isEmpty ? 'Enter your full name' : null,
                         onChanged: (val) => setState(() => _fullName = val),
                       ),
                       const SizedBox(height: 20.0),
@@ -84,7 +89,9 @@ class _RegisterState extends State<Register> {
                           prefixIcon: Icon(Icons.lock),
                         ),
                         obscureText: true,
-                        validator: (val) => val!.length < 6 ? 'Password must be at least 6 characters' : null,
+                        validator: (val) => val!.length < 6
+                            ? 'Password must be at least 6 characters'
+                            : null,
                         onChanged: (val) => setState(() => _password = val),
                       ),
                       const SizedBox(height: 20.0),
@@ -92,8 +99,9 @@ class _RegisterState extends State<Register> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() => _loading = true);
-                            dynamic result = await _auth.registerWithEmailAndPassword(
-                                _email, _password, _username, _fullName);
+                            dynamic result =
+                                await _auth.registerWithEmailAndPassword(
+                                    _email, _password, _username, _fullName);
                             if (result == null) {
                               setState(() {
                                 _error = 'Please supply a valid email';
@@ -107,7 +115,8 @@ class _RegisterState extends State<Register> {
                       const SizedBox(height: 12.0),
                       Text(
                         _error,
-                        style: TextStyle(color: Colors.red, fontSize: 14.0),
+                        style:
+                            const TextStyle(color: Colors.red, fontSize: 14.0),
                       ),
                       const Padding(
                         padding: EdgeInsets.only(top: 1.0),

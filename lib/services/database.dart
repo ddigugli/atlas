@@ -10,7 +10,10 @@ class DatabaseService {
   Future<String?> getUserIdByUsername(String username) async {
     try {
       // Query Firestore to find the document where username is equal to 'atlasfit'
-      QuerySnapshot querySnapshot = await firestore.collection('users').where('username', isEqualTo: username).get();
+      QuerySnapshot querySnapshot = await firestore
+          .collection('users')
+          .where('username', isEqualTo: username)
+          .get();
 
       // Check if there is a document with the given username
       if (querySnapshot.docs.isNotEmpty) {
@@ -30,7 +33,8 @@ class DatabaseService {
   }
 
   // Method to add an exercise - each exercise must have unique name since the document ID is the exercise name
-  Future<void> addExercise(String exerciseName, String description, String targetMuscle, String equipment, String type) async {
+  Future<void> addExercise(String exerciseName, String description,
+      String targetMuscle, String equipment, String type) async {
     try {
       await exerciseCollection.doc(exerciseName).set({
         'exerciseName': exerciseName,
@@ -47,14 +51,21 @@ class DatabaseService {
   }
 
   // Method to add a workout - workoutIDs must be unique since workouts can have the same name if they are made by different users
-  Future<void> addWorkout(String workoutID, String workoutName, String userID, String description, bool verified, List<Map<String, dynamic>> exercises) async {
+  Future<void> addWorkout(
+      String workoutID,
+      String workoutName,
+      String userID,
+      String description,
+      bool verified,
+      List<Map<String, dynamic>> exercises) async {
     try {
       await workoutCollection.doc(workoutID).set({
         'workoutName': workoutName,
         'createdBy': userID,
         'description': description,
         'verified': verified,
-        'exercises': exercises  // List of exercises with sets, reps, rest time, and exercise IDs
+        'exercises':
+            exercises // List of exercises with sets, reps, rest time, and exercise IDs
       });
     } catch (e) {
       if (kDebugMode) {
@@ -67,7 +78,8 @@ class DatabaseService {
   Future<List<Map<String, dynamic>>> getWorkoutsByUserID(String userID) async {
     try {
       // Query Firestore to get the workouts for the given user
-      QuerySnapshot workoutSnapshots = await workoutCollection.where('createdBy', isEqualTo: userID).get();
+      QuerySnapshot workoutSnapshots =
+          await workoutCollection.where('createdBy', isEqualTo: userID).get();
 
       // Check if there are any workouts
       if (workoutSnapshots.docs.isNotEmpty) {
@@ -89,5 +101,4 @@ class DatabaseService {
       throw Exception('Failed to fetch workouts');
     }
   }
-
 }

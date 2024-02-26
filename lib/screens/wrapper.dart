@@ -8,15 +8,17 @@ import 'package:atlas/screens/home/home_page.dart';
 import 'dart:convert'; //
 import 'package:atlas/screens/authenticate/sign_in.dart'; // Assuming this is your sign-in page
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:atlas/models/user.dart';
 
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User?>(context); //Refers to firebase user
+    final atlasUser =
+        Provider.of<AtlasUser?>(context); //Refers to firebase user
 
-    print(user);
+    print(atlasUser);
     // return either the Home or Authenticate widget
-    if (user == null) {
+    if (atlasUser == null) {
       return Authenticate();
     } else {
       return const MyHomePage();
