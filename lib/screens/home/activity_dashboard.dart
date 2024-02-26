@@ -32,17 +32,7 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Activity Dashboard'),
-        actions: <Widget>[
-          TextButton.icon(
-            icon: const Icon(Icons.person),
-            label: const Text('Sign Out'),
-            onPressed: () async {
-              // Add sign out functionality
-              // Call signOut method from AuthService
-              AuthService().signOut();
-            },
-          ),
-        ],
+        actions: <Widget>[],
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
@@ -61,7 +51,8 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
                   itemCount: workoutsData.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> workout = workoutsData[index];
-                    List<Map<String, dynamic>> exercises = List<Map<String, dynamic>>.from(workout['exercises']);
+                    List<Map<String, dynamic>> exercises =
+                        List<Map<String, dynamic>>.from(workout['exercises']);
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -76,8 +67,10 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
                           itemBuilder: (context, index) {
                             Map<String, dynamic> exercise = exercises[index];
                             return ListTile(
-                              title: Text('Exercise Name: ${exercise['exerciseName']}'),
-                              subtitle: Text('Sets: ${exercise['sets']}, Reps: ${exercise['reps']}, Rest Time: ${exercise['restTime']}'),
+                              title: Text(
+                                  'Exercise Name: ${exercise['exerciseName']}'),
+                              subtitle: Text(
+                                  'Sets: ${exercise['sets']}, Reps: ${exercise['reps']}, Rest Time: ${exercise['restTime']}'),
                             );
                           },
                         ),

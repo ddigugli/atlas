@@ -118,6 +118,8 @@ class AuthService {
           'username': username,
           'firstName': firstName,
           'lastName': lastName,
+          'followers': [],
+          'following': [],
         });
       }
 
