@@ -101,4 +101,45 @@ class DatabaseService {
       throw Exception('Failed to fetch workouts');
     }
   }
+
+  /* Function to get followers count */
+  Future<List> getFollowersCount(String userId) async {
+    var doc = await firestore.collection('users').doc(userId).get();
+    if (doc.exists) {
+      List followers = doc.data()?['followers'] ?? [];
+      return followers;
+    }
+    return [];
+  }
+
+  Future<List> getFollowingCount(String userId) async {
+    var doc = await firestore.collection('users').doc(userId).get();
+    if (doc.exists) {
+      List following = doc.data()?['following'] ?? [];
+      return following;
+    }
+    return [];
+  }
+
+  //Function to get username, firstname and lastname from userid. Used in followers and following page
+  Future<Map<String, dynamic>> getUserData(String userId) async {
+    var doc = await firestore.collection('users').doc(userId).get();
+    if (doc.exists) {
+      return {
+        'username': doc.data()?['username'] ?? '',
+        'firstName': doc.data()?['firstName'] ?? '',
+        'lastName': doc.data()?['lastName'] ?? ''
+      };
+    }
+    return {};
+  }
+
+  Future<List> getUsersWorkouts(String userId) async {
+    var doc = await firestore.collection('users').doc(userId).get();
+    if (doc.exists) {
+      List workouts = doc.data()?['workouts'] ?? [];
+      return workouts;
+    }
+    return [];
+  }
 }
