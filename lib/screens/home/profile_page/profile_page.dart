@@ -14,6 +14,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
   // Widget to build the count button
   Widget _buildCountButton(String label, Future<List<dynamic>> countFuture) {
     return FutureBuilder<List<dynamic>>(
@@ -117,6 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontSize: 25.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
+                    
                     Text(
                       '@${atlasUser?.username ?? "username"}',
                       style: const TextStyle(
@@ -128,6 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             const SizedBox(height: 15.0),
+            
             Row(
               //decrease padding between buttons
               //align the buttons to the right of the screen
