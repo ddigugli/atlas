@@ -104,7 +104,7 @@ class DatabaseService {
 
   /* Function to get followers count */
   Future<List> getFollowersCount(String userId) async {
-    var doc = await firestore.collection('users').doc(userId).get();
+    var doc = await firestore.collection('followers').doc(userId).get();
     if (doc.exists) {
       List followers = doc.data()?['followers'] ?? [];
       return followers;
@@ -113,7 +113,7 @@ class DatabaseService {
   }
 
   Future<List> getFollowingCount(String userId) async {
-    var doc = await firestore.collection('users').doc(userId).get();
+    var doc = await firestore.collection('following').doc(userId).get();
     if (doc.exists) {
       List following = doc.data()?['following'] ?? [];
       return following;
@@ -134,11 +134,12 @@ class DatabaseService {
     return {};
   }
 
-  Future<List> getUsersWorkouts(String userId) async {
-    var doc = await firestore.collection('users').doc(userId).get();
+  Future<List> getWorkotsByUser(String userId) async {
+    var doc = await firestore.collection('workoutsByUser').doc(userId).get();
     if (doc.exists) {
-      List workouts = doc.data()?['workouts'] ?? [];
-      return workouts;
+      List workoutIDs = doc.data()?['workoutIDs'] ?? [];
+      //For now, this is just going to return a list of workoutIDs
+      return workoutIDs;
     }
     return [];
   }

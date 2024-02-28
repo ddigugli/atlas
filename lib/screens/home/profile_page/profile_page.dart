@@ -28,6 +28,8 @@ class _ProfilePageState extends State<ProfilePage> {
         } else {
           // Once the Future is complete, use the length of the list
           int count = snapshot.data?.length ?? 0;
+          print('Future');
+          print(countFuture);
           return ElevatedButton(
             //decrease space between buttons
 
@@ -134,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
               children: [
                 _buildCountButton(
-                    'Workouts', DatabaseService().getUsersWorkouts(userId)),
+                    'Workouts', DatabaseService().getWorkotsByUser(userId)),
                 _buildCountButton(
                     'Followers', DatabaseService().getFollowersCount(userId)),
                 _buildCountButton(
