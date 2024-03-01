@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'settings_page.dart';
 import 'package:atlas/models/user.dart';
+import 'package:atlas/models/workout.dart';
 import 'package:provider/provider.dart';
 import 'package:atlas/services/database.dart'; // Import your DatabaseService
 import 'following_page.dart';
@@ -29,8 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
         } else {
           // Once the Future is complete, use the length of the list
           int count = snapshot.data?.length ?? 0;
-          print('Future');
-          print(countFuture);
           return ElevatedButton(
             //decrease space between buttons
 
@@ -53,13 +52,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           FollowingPage(following: countFuture)),
                 );
                 // Navigate to the following page
-              } else if (label == 'Workouts') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          FollowingPage(following: countFuture)),
-                );
               }
             },
             child: Column(
@@ -145,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
               children: [
                 _buildCountButton(
-                    'Workouts', DatabaseService().getWorkoutsByUser(userId)),
+                    'Workouts', DatabaseService().getWorkoutIDsByUser(userId)),
                 _buildCountButton(
                     'Followers', DatabaseService().getFollowersCount(userId)),
                 _buildCountButton(

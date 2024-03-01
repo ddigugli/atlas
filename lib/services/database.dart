@@ -109,10 +109,10 @@ class DatabaseService {
     return {};
   }
 
-  Future<List<String>> getWorkoutIDsByUser(String userId) async {
+  Future<List> getWorkoutIDsByUser(String userId) async {
     var doc = await firestore.collection('workoutsByUser').doc(userId).get();
     if (doc.exists) {
-      List<String> workoutIDs = doc.data()?['workoutIDs'] ?? [];
+      List workoutIDs = doc.data()?['workoutIDs'] ?? [];
       return workoutIDs;
     }
     return [];
@@ -130,7 +130,10 @@ class DatabaseService {
                 'exerciseName': exercise.name,
                 'sets': exercise.sets,
                 'reps': exercise.reps,
-                'weight': exercise.weight
+                'weight': exercise.weight,
+                'description': exercise.description,
+                'equipment': exercise.equipment,
+                'targetMuscle': exercise.targetMuscle,
               })
           .toList(),
     });
@@ -144,9 +147,8 @@ class DatabaseService {
   }
 
   //Write a function that returns a list of workouts from a list of workoutIDs
-  Future<List<Workout>> getWorkoutsByUser(String userId) async {
-    List<String> workoutIDs = await getWorkoutIDsByUser(userId);
-
+  Future<List<Workout>> getWorkoutsByUser(
+      String userId, List<String> workoutIDs) async {
     List<Workout> workouts = [];
     for (var workoutID in workoutIDs) {
       DocumentSnapshot workoutDoc =
