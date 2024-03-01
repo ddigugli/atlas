@@ -41,7 +41,7 @@ class _ExerciseSelectionPageState extends State<ExerciseSelectionPage> {
           return ListTile(
             title: Text(exercises[index].name),
             onTap: () {
-              // Directly pass the Exercise object back
+              // Directly pass the Exercise name back
               Navigator.pop(context, exercises[index].name);
             },
           );
