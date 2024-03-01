@@ -5,12 +5,10 @@ class Workout {
   String workoutName;
   String description;
   List<Exercise> exercises;
-  
 
-  Workout({
-    required this.createdBy,
-    required this.workoutName,
-    this.description = "",
-    required this.exercises
-  });
+  Workout(
+      {required this.createdBy,
+      required this.workoutName,
+      this.description = "",
+      required this.exercises});
 }
