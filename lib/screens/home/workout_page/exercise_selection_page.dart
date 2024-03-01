@@ -8,7 +8,7 @@ class ExerciseSelectionPage extends StatefulWidget {
 }
 
 class _ExerciseSelectionPageState extends State<ExerciseSelectionPage> {
-  List<Exercise> exercises = []; // Updated to store Exercise objects
+  List<Exercise> exercises = [];
 
   @override
   void initState() {
@@ -22,8 +22,11 @@ class _ExerciseSelectionPageState extends State<ExerciseSelectionPage> {
     List<Exercise> fetchedExercises = snapshot.docs.map((doc) {
       var data = doc.data() as Map<String, dynamic>;
       return Exercise(
-          name:
-              data['exerciseName']); // Initializes Exercise objects with names
+        name: data['exerciseName'],
+        description: data['description'],
+        equipment: data['equipment'],
+        targetMuscle: data['targetMuscle'],
+      );
     }).toList();
 
     setState(() => exercises = fetchedExercises);
@@ -41,8 +44,8 @@ class _ExerciseSelectionPageState extends State<ExerciseSelectionPage> {
           return ListTile(
             title: Text(exercises[index].name),
             onTap: () {
-              // Directly pass the Exercise name back
-              Navigator.pop(context, exercises[index].name);
+              // Pass back the full Exercise object
+              Navigator.pop(context, exercises[index]);
             },
           );
         },

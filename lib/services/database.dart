@@ -1,6 +1,8 @@
+import 'package:atlas/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:atlas/models/exercise.dart';
+import 'package:atlas/models/workout.dart';
 
 // Firestore initialization
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -75,34 +77,6 @@ class DatabaseService {
     }
   }
 
-  // Method to fetch the workout data for a specific user
-  Future<List<Map<String, dynamic>>> getWorkoutsByUserID(String userID) async {
-    try {
-      // Query Firestore to get the workouts for the given user
-      QuerySnapshot workoutSnapshots =
-          await workoutCollection.where('createdBy', isEqualTo: userID).get();
-
-      // Check if there are any workouts
-      if (workoutSnapshots.docs.isNotEmpty) {
-        // Convert query snapshot to a list of workout data
-        List<Map<String, dynamic>> workoutsData = [];
-        for (var doc in workoutSnapshots.docs) {
-          workoutsData.add(doc.data() as Map<String, dynamic>);
-        }
-        return workoutsData;
-      } else {
-        // No workouts found for the user
-        return [];
-      }
-    } catch (e) {
-      // Handle errors
-      if (kDebugMode) {
-        print('Error fetching workouts: $e');
-      }
-      throw Exception('Failed to fetch workouts');
-    }
-  }
-
   /* Function to get followers count */
   Future<List> getFollowersCount(String userId) async {
     var doc = await firestore.collection('followers').doc(userId).get();
@@ -135,23 +109,23 @@ class DatabaseService {
     return {};
   }
 
-  Future<List> getWorkotsByUser(String userId) async {
+  Future<List<String>> getWorkoutIDsByUser(String userId) async {
     var doc = await firestore.collection('workoutsByUser').doc(userId).get();
     if (doc.exists) {
-      List workoutIDs = doc.data()?['workoutIDs'] ?? [];
-      //For now, this is just going to return a list of workoutIDs
+      List<String> workoutIDs = doc.data()?['workoutIDs'] ?? [];
       return workoutIDs;
     }
     return [];
   }
 
-  Future<void> saveWorkout(String userId, String workoutName,
-      String description, List<Exercise> exercises) async {
+  //return a Workout object from a workout id
+
+  Future<void> saveWorkout(Workout workout, String userId) async {
     DocumentReference workoutRef = await workoutCollection.add({
       'createdBy': userId,
-      'workoutName': workoutName,
-      'description': description,
-      'exercises': exercises
+      'workoutName': workout.workoutName,
+      'description': workout.description,
+      'exercises': workout.exercises
           .map((exercise) => {
                 'exerciseName': exercise.name,
                 'sets': exercise.sets,
@@ -167,5 +141,30 @@ class DatabaseService {
     await userWorkoutsRef.update({
       'workoutIDs': FieldValue.arrayUnion([workoutRef.id])
     });
+  }
+
+  //Write a function that returns a list of workouts from a list of workoutIDs
+  Future<List<Workout>> getWorkoutsByUser(String userId) async {
+    List<String> workoutIDs = await getWorkoutIDsByUser(userId);
+
+    List<Workout> workouts = [];
+    for (var workoutID in workoutIDs) {
+      DocumentSnapshot workoutDoc =
+          await workoutCollection.doc(workoutID).get();
+      if (workoutDoc.exists) {
+        workouts.add(Workout(
+            createdBy: workoutDoc['createdBy'],
+            workoutName: workoutDoc['workoutName'],
+            description: workoutDoc['description'],
+            exercises: workoutDoc['exercises']
+                .map<Exercise>((exercise) => Exercise(
+                    name: exercise['exerciseName'],
+                    sets: exercise['sets'],
+                    reps: exercise['reps'],
+                    weight: exercise['weight']))
+                .toList()));
+      }
+    }
+    return workouts;
   }
 }

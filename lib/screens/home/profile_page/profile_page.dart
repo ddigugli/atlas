@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:atlas/services/database.dart'; // Import your DatabaseService
 import 'following_page.dart';
 import 'followers_page.dart';
+import 'display_workouts_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -14,7 +15,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   // Widget to build the count button
   Widget _buildCountButton(String label, Future<List<dynamic>> countFuture) {
     return FutureBuilder<List<dynamic>>(
@@ -53,6 +53,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           FollowingPage(following: countFuture)),
                 );
                 // Navigate to the following page
+              } else if (label == 'Workouts') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          FollowingPage(following: countFuture)),
+                );
               }
             },
             child: Column(
@@ -118,7 +125,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontSize: 25.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
-                    
                     Text(
                       '@${atlasUser?.username ?? "username"}',
                       style: const TextStyle(
@@ -130,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             const SizedBox(height: 15.0),
-            
+
             Row(
               //decrease padding between buttons
               //align the buttons to the right of the screen
@@ -139,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
               children: [
                 _buildCountButton(
-                    'Workouts', DatabaseService().getWorkotsByUser(userId)),
+                    'Workouts', DatabaseService().getWorkoutsByUser(userId)),
                 _buildCountButton(
                     'Followers', DatabaseService().getFollowersCount(userId)),
                 _buildCountButton(

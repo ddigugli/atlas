@@ -4,6 +4,7 @@ import 'package:atlas/models/exercise.dart'; // Ensure this path is correct
 import 'package:atlas/screens/home/workout_page/exercise_selection_page.dart'; // Verify the path
 import 'package:atlas/services/database.dart'; // Verify the path
 import 'package:atlas/models/user.dart';
+import 'package:atlas/models/workout.dart';
 import 'package:provider/provider.dart';
 
 class WorkoutBuilder extends StatefulWidget {
@@ -21,6 +22,7 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
   @override
   Widget build(BuildContext context) {
     final atlasUser = Provider.of<AtlasUser?>(context);
+    final userId = atlasUser?.uid ?? '';
 
     return Scaffold(
       appBar: AppBar(
@@ -39,23 +41,34 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
             ),
             child: TextButton(
               onPressed: () async {
-                await DatabaseService().saveWorkout(atlasUser!.uid, workoutName,
-                    workoutDescription, selectedExercises);
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('Workout Saved!')));
-                //return to previous page
-                Navigator.pop(context);
+                if (atlasUser != null) {
+                  // Ensure there is a logged-in user
+                  Workout newWorkout = Workout(
+                    createdBy:
+                        atlasUser.uid, // Use the user ID from the Provider
+                    workoutName: workoutName,
+                    description: workoutDescription,
+                    exercises: selectedExercises,
+                  );
+
+                  await DatabaseService().saveWorkout(newWorkout,
+                      userId); // Call the saveWorkout method with the new Workout object
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('Workout Saved!')));
+                  Navigator.pop(
+                      context); // Optionally navigate back or reset the form
+                } else {
+                  // Handle the case where there is no logged-in user
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No user logged in.')));
+                }
               },
-              child: Text('Save',
-                  style: TextStyle(color: Colors.white)), // Text color
+              child: Text('Save', style: TextStyle(color: Colors.white)),
               style: TextButton.styleFrom(
                 backgroundColor: Colors
-                    .transparent, // Makes the TextButton's background transparent to reveal the Container's color
+                    .transparent, // Makes the TextButton's background transparent
                 padding: EdgeInsets.symmetric(
                     horizontal: 16), // Horizontal padding within the button
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        4)), // Matches the Container's borderRadius
               ),
             ),
           ),
@@ -108,17 +121,17 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
   }
 
   Future<void> _navigateAndDisplaySelection(BuildContext context) async {
-    final String? exerciseName = await Navigator.push(
+    final Exercise? selectedExercise = await Navigator.push<Exercise>(
       context,
       MaterialPageRoute(builder: (context) => ExerciseSelectionPage()),
     );
 
-    if (exerciseName != null) {
-      _showAddExerciseDetailsDialog(exerciseName);
+    if (selectedExercise != null) {
+      _showAddExerciseDetailsDialog(selectedExercise);
     }
   }
 
-  Future<void> _showAddExerciseDetailsDialog(String exerciseName) async {
+  Future<void> _showAddExerciseDetailsDialog(Exercise exercise) async {
     TextEditingController setsController = TextEditingController();
     TextEditingController repsController = TextEditingController();
     TextEditingController weightController = TextEditingController();
@@ -128,7 +141,7 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
       barrierDismissible: false, // User must tap a button to dismiss the dialog
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Details for $exerciseName'),
+          title: Text('Add Details for ${exercise.name}'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -162,7 +175,7 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
               onPressed: () {
                 setState(() {
                   selectedExercises.add(Exercise(
-                    name: exerciseName,
+                    name: exercise.name,
                     sets: setsController.text,
                     reps: repsController.text,
                     weight: weightController.text,
