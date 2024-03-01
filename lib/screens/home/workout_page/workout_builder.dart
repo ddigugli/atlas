@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:atlas/models/user.dart'; // Ensure this is the correct path for your User model
+import 'package:cloud_firestore/cloud_firestore.dart'; // If you're using Firestore
+import 'package:atlas/models/exercise.dart'; // Ensure this path is correct
 import 'package:atlas/screens/home/workout_page/exercise_selection_page.dart'; // Verify the path
-import 'package:atlas/models/exercise.dart'; // Verify the path for your Exercise model
+import 'package:atlas/services/database.dart'; // Verify the path
+import 'package:atlas/models/user.dart';
+import 'package:provider/provider.dart';
 
 class WorkoutBuilder extends StatefulWidget {
   const WorkoutBuilder({Key? key}) : super(key: key);
@@ -17,9 +20,46 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    final atlasUser = Provider.of<AtlasUser?>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Workout Builder'),
+        centerTitle: true, // Center the title text
+        actions: <Widget>[
+          Container(
+            margin: EdgeInsets.symmetric(
+                vertical:
+                    8), // Adjusts the button's vertical positioning and size
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(
+                  255, 19, 69, 109), // Background color of the butt  on
+              borderRadius: BorderRadius.circular(
+                  4), // Adjusts the roundness of button corners to make it rectangular
+            ),
+            child: TextButton(
+              onPressed: () async {
+                await DatabaseService().saveWorkout(atlasUser!.uid, workoutName,
+                    workoutDescription, selectedExercises);
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('Workout Saved!')));
+                //return to previous page
+                Navigator.pop(context);
+              },
+              child: Text('Save',
+                  style: TextStyle(color: Colors.white)), // Text color
+              style: TextButton.styleFrom(
+                backgroundColor: Colors
+                    .transparent, // Makes the TextButton's background transparent to reveal the Container's color
+                padding: EdgeInsets.symmetric(
+                    horizontal: 16), // Horizontal padding within the button
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        4)), // Matches the Container's borderRadius
+              ),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -50,6 +90,7 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
                   exercise: exercise,
                   onDelete: () =>
                       setState(() => selectedExercises.removeAt(idx)),
+                  onEdit: () => _showEditExerciseDialog(exercise, idx),
                   index: idx, // Pass the index to ExerciseTile
                 );
               }).toList(),
@@ -94,14 +135,12 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
                 TextField(
                   controller: setsController,
                   decoration: InputDecoration(labelText: 'Sets'),
-                  keyboardType:
-                      TextInputType.text, // Sets can be a range, hence text
+                  keyboardType: TextInputType.text,
                 ),
                 TextField(
                   controller: repsController,
                   decoration: InputDecoration(labelText: 'Reps'),
-                  keyboardType:
-                      TextInputType.text, // Reps can be a range, hence text
+                  keyboardType: TextInputType.text,
                 ),
                 TextField(
                   controller: weightController,
@@ -121,7 +160,6 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
             TextButton(
               child: Text('Add'),
               onPressed: () {
-                // Add the new exercise with details to the list
                 setState(() {
                   selectedExercises.add(Exercise(
                     name: exerciseName,
@@ -138,18 +176,82 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
       },
     );
   }
+
+  Future<void> _showEditExerciseDialog(Exercise exercise, int index) async {
+    TextEditingController setsController =
+        TextEditingController(text: exercise.sets);
+    TextEditingController repsController =
+        TextEditingController(text: exercise.reps);
+    TextEditingController weightController =
+        TextEditingController(text: exercise.weight);
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap a button to dismiss the dialog
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Details for ${exercise.name}'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: setsController,
+                  decoration: InputDecoration(labelText: 'Sets'),
+                  keyboardType: TextInputType.text,
+                ),
+                TextField(
+                  controller: repsController,
+                  decoration: InputDecoration(labelText: 'Reps'),
+                  keyboardType: TextInputType.text,
+                ),
+                TextField(
+                  controller: weightController,
+                  decoration: InputDecoration(labelText: 'Weight (lbs)'),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                setState(() {
+                  selectedExercises[index] = Exercise(
+                    name: exercise.name,
+                    sets: setsController.text,
+                    reps: repsController.text,
+                    weight: weightController.text,
+                  );
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class ExerciseTile extends StatelessWidget {
   final Exercise exercise;
   final VoidCallback onDelete;
-  final int index; // Added index to track the exercise position
+  final VoidCallback onEdit;
+  final int index;
 
   const ExerciseTile({
     Key? key,
     required this.exercise,
     required this.onDelete,
-    required this.index, // Require index in the constructor
+    required this.onEdit,
+    required this.index,
   }) : super(key: key);
 
   @override
@@ -163,27 +265,27 @@ class ExerciseTile extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  '${index + 1}) ', // Display the exercise number
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                Text('${index + 1}) ',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 Expanded(
-                  child: Text(
-                    exercise.name,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                    child: Text(exercise.name,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold))),
               ],
             ),
             Text(
-              'Sets: ${exercise.sets}, Reps: ${exercise.reps}, Weight: ${exercise.weight}lbs',
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: onDelete,
-              ),
+                'Sets: ${exercise.sets}, Reps: ${exercise.reps}, Weight: ${exercise.weight}lbs'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                    icon: Icon(Icons.edit, color: Colors.blue),
+                    onPressed: onEdit),
+                IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: onDelete),
+              ],
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:atlas/models/exercise.dart';
 
 // Firestore initialization
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -142,5 +143,29 @@ class DatabaseService {
       return workoutIDs;
     }
     return [];
+  }
+
+  Future<void> saveWorkout(String userId, String workoutName,
+      String description, List<Exercise> exercises) async {
+    DocumentReference workoutRef = await workoutCollection.add({
+      'createdBy': userId,
+      'workoutName': workoutName,
+      'description': description,
+      'exercises': exercises
+          .map((exercise) => {
+                'exerciseName': exercise.name,
+                'sets': exercise.sets,
+                'reps': exercise.reps,
+                'weight': exercise.weight
+              })
+          .toList(),
+    });
+
+    // Update the workoutsByUser collection
+    DocumentReference userWorkoutsRef =
+        firestore.collection('workoutsByUser').doc(userId);
+    await userWorkoutsRef.update({
+      'workoutIDs': FieldValue.arrayUnion([workoutRef.id])
+    });
   }
 }
