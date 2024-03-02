@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'settings_page.dart';
 import 'package:atlas/models/user.dart';
-import 'package:atlas/models/workout.dart';
 import 'package:provider/provider.dart';
 import 'package:atlas/services/database.dart'; // Import your DatabaseService
 import 'following_page.dart';
 import 'followers_page.dart';
-import 'display_workouts_page.dart';
+import 'workout_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -23,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show a loading indicator while waiting for the Future to complete
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           // Handle any errors that occur during fetching the data
           return Text('Error: ${snapshot.error}');
@@ -41,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
+                      // pass the list input to display on the corresponding page
                       builder: (context) =>
                           FollowersPage(followers: countFuture)),
                 );
@@ -48,15 +48,23 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
+                      // pass the list input to display on the corresponding page
                       builder: (context) =>
                           FollowingPage(following: countFuture)),
+                );
+              } else if (label == 'Workouts') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      // pass the list input to display on the corresponding page
+                      builder: (context) => WorkoutPage(workouts: countFuture)),
                 );
                 // Navigate to the following page
               }
             },
             child: Column(
               children: [
-                Text('$count', style: TextStyle(fontSize: 20)),
+                Text('$count', style: const TextStyle(fontSize: 20)),
                 Text(label),
               ],
             ),
@@ -137,11 +145,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
               children: [
                 _buildCountButton(
-                    'Workouts', DatabaseService().getWorkoutIDsByUser(userId)),
+                    'Workouts', DatabaseService().getWorkoutsByUser(userId)),
                 _buildCountButton(
-                    'Followers', DatabaseService().getFollowersCount(userId)),
+                    'Followers', DatabaseService().getFollowers(userId)),
                 _buildCountButton(
-                    'Following', DatabaseService().getFollowingCount(userId)),
+                    'Following', DatabaseService().getFollowing(userId)),
               ],
             ),
             //add space between divider and above
@@ -151,15 +159,6 @@ class _ProfilePageState extends State<ProfilePage> {
               thickness: 2,
             ),
             const SizedBox(height: 15.0),
-            ...List.generate(
-              2, // Dynamically change this for each user depending on the number of workouts they've posted
-              (index) => const Card(
-                child: ListTile(
-                  title: Text(
-                      "Recent Workout Card"), // Placeholder until you decide how each card should look
-                ),
-              ),
-            ),
           ]),
         ],
       ),
