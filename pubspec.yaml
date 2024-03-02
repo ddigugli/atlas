@@ -29,6 +29,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/appainter_theme.json
+    - .env
   fonts:
     - family: Roboto
       fonts:
