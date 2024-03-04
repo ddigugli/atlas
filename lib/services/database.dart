@@ -30,6 +30,18 @@ class DatabaseService {
     return [];
   }
 
+  //Write a function that gets the userId called getUserID from a username
+  Future<String> getUserID(String username) async {
+    var doc = await firestore
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get();
+    if (doc.docs.isNotEmpty) {
+      return doc.docs.first.id;
+    }
+    return '';
+  }
+
   //Function to get username, firstname and lastname from userid. Used in followers and following page
   Future<Map<String, dynamic>> getUserData(String userId) async {
     var doc = await firestore.collection('users').doc(userId).get();
