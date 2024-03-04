@@ -10,7 +10,9 @@ class ExerciseSelectionPage extends StatefulWidget {
 }
 
 class _ExerciseSelectionPageState extends State<ExerciseSelectionPage> {
+  final TextEditingController _searchController = TextEditingController();
   List<Exercise> exercises = [];
+  List<Exercise> filteredExercises = [];
 
   @override
   void initState() {
@@ -31,7 +33,19 @@ class _ExerciseSelectionPageState extends State<ExerciseSelectionPage> {
       );
     }).toList();
 
-    setState(() => exercises = fetchedExercises);
+    setState(() {
+      exercises = fetchedExercises;
+      filteredExercises.addAll(exercises); // Populate filteredExercises with all exercises
+    });
+  }
+
+  void filterExercises(String query) {
+    setState(() {
+      filteredExercises = exercises
+          .where((exercise) =>
+              exercise.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
 
   @override
@@ -40,17 +54,36 @@ class _ExerciseSelectionPageState extends State<ExerciseSelectionPage> {
       appBar: AppBar(
         title: const Text('Select Exercise'),
       ),
-      body: ListView.builder(
-        itemCount: exercises.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(exercises[index].name),
-            onTap: () {
-              // Pass back the full Exercise object
-              Navigator.pop(context, exercises[index]);
-            },
-          );
-        },
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                filterExercises(value);
+              },
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                hintText: 'Search...',
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredExercises.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(filteredExercises[index].name),
+                  onTap: () {
+                    // Pass back the full Exercise object
+                    Navigator.pop(context, filteredExercises[index]);
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
