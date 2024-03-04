@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:atlas/services/database.dart'; // Import your DatabaseService
+import 'package:atlas/screens/home/default_templates/default_profile.dart';
 
 class FollowingPage extends StatefulWidget {
   final Future<List<dynamic>> following;
@@ -46,11 +47,19 @@ class _FollowingPageState extends State<FollowingPage> {
                       Map<String, dynamic> user = snapshot.data!;
                       return Card(
                         child: ListTile(
-                          title: Text(
-                              '@${user['username']}'), // Corrected map access
-                          subtitle: Text(
-                              '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'), // Corrected map access with null check
-                        ),
+                            title: Text(
+                                '@${user['username']}'), // Corrected map access
+                            subtitle: Text(
+                                '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'), // Corrected map access with null check
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DefaultProfile(
+                                      username: user['username']),
+                                ),
+                              );
+                            }),
                       );
                     } else {
                       return const Center(child: Text('Not Following Anyone!'));
