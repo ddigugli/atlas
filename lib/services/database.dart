@@ -125,13 +125,22 @@ class DatabaseService {
           .toList(),
     });
 
-    // Update the workoutsByUser collection
-    DocumentReference userWorkoutsRef =
-        firestore.collection('workoutsByUser').doc(userId);
+  // Update the workoutsByUser collection
+  DocumentReference userWorkoutsRef =
+      firestore.collection('workoutsByUser').doc(userId);
+  var userWorkoutsDoc = await userWorkoutsRef.get();
+  if (!userWorkoutsDoc.exists) {
+    // If the document doesn't exist, create a new one with the workout ID
+    await userWorkoutsRef.set({
+      'workoutIDs': [workoutRef.id],
+    });
+  } else {
+    // If the document exists, update it with the new workout ID
     await userWorkoutsRef.update({
       'workoutIDs': FieldValue.arrayUnion([workoutRef.id])
     });
   }
+}
 
   //Write a function that returns a list of workouts from a list of workoutIDs
   Future<List<Workout>> getCreatedWorkoutsByUser(String userId) async {
