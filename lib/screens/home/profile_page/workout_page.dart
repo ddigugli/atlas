@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:atlas/models/workout.dart'; // Import your Workout model
 
 class WorkoutPage extends StatefulWidget {
-  final Future<List<dynamic>> workouts; // Change the type to List<Workout>
+  final Future<List<Workout>> workouts; // Change the type to List<Workout>
 
   const WorkoutPage({super.key, required this.workouts});
 
@@ -15,13 +15,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true, // Horizontally center the title
         title: const Text(
           'Workouts',
           textAlign: TextAlign.center, // Center the text within the app bar
         ),
-        centerTitle: true, // Horizontally center the title
       ),
-      body: FutureBuilder<List<dynamic>>(
+      body: FutureBuilder<List<Workout>>(
           future:
               widget.workouts, // Use the followers future passed to the widget
           builder: (context, snapshot) {
@@ -30,7 +30,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (snapshot.hasData) {
-              List<Workout> workouts = (snapshot.data ?? []) as List<Workout>;
+              List<Workout> workouts = (snapshot.data ?? []);
               return ListView.builder(
                   itemCount: workouts.length,
                   itemBuilder: (BuildContext context, int index) {

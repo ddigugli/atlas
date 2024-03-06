@@ -12,26 +12,32 @@ CollectionReference completedWorkoutsCollection =
 
 class DatabaseService {
   /* Function to get user's followers ids and return them as a list */
-  Future<List> getFollowers(String userId) async {
+  Future<List<String>> getFollowerIDs(String userId) async {
     var doc = await firestore.collection('followers').doc(userId).get();
     if (doc.exists) {
-      List followers = doc.data()?['followers'] ?? [];
+      List<dynamic> followersDynamic = doc.data()?['followers'] ?? [];
+      // Explicitly cast each element in the list to String
+      List<String> followers =
+          followersDynamic.map((e) => e.toString()).toList();
       return followers;
     }
     return [];
   }
 
   /* Function to get user's following ids and return them as a list */
-  Future<List> getFollowing(String userId) async {
+  Future<List<String>> getFollowingIDs(String userId) async {
     var doc = await firestore.collection('following').doc(userId).get();
     if (doc.exists) {
-      List following = doc.data()?['following'] ?? [];
+      List<dynamic> followingDynamic = doc.data()?['following'] ?? [];
+      // Explicitly cast each element in the list to String
+      List<String> following =
+          followingDynamic.map((e) => e.toString()).toList();
       return following;
     }
     return [];
   }
 
-  //Write a function that gets the userId called getUserID from a username
+  //TODO: MIGHT BE ABLE TO DELETE ONCE WE CHANGE TO FULL **MODULARITY**
   Future<String> getUserID(String username) async {
     var doc = await firestore
         .collection('users')
@@ -43,7 +49,7 @@ class DatabaseService {
     return '';
   }
 
-  //Function to get username, firstname and lastname from userid. Used in followers and following page
+  //TODO: FIX THIS IN DEFAULT_PROFILE Function to get username, firstname and lastname from userid. Used in followers and following page
   Future<Map<String, dynamic>> getUserData(String userId) async {
     var doc = await firestore.collection('users').doc(userId).get();
     if (doc.exists) {
@@ -54,6 +60,19 @@ class DatabaseService {
       };
     }
     return {};
+  }
+
+  //TODO: THIS CAN BE MOVED TO ANOTHER FILE. Used in search page.
+  Future<List<AtlasUser>> getUsers() async {
+    QuerySnapshot querySnapshot = await firestore.collection('users').get();
+
+    // Use Future.wait to wait for all the getAtlasUser futures to complete
+    List<AtlasUser> users =
+        await Future.wait(querySnapshot.docs.map((doc) async {
+      return await getAtlasUser(doc.id);
+    }));
+
+    return users;
   }
 
   Future<AtlasUser> getAtlasUser(String userId) async {
@@ -67,20 +86,26 @@ class DatabaseService {
           username: doc.data()?['username'] ?? '');
     } else {
       return AtlasUser(
-          uid: '', email: '', firstName: '', lastName: '', username: '');
+          //CONSIDER CHANGING TO NULL AND change Future<AtlasUser> to Future<Object>
+          uid: '',
+          email: '',
+          firstName: '',
+          lastName: '',
+          username: '');
     }
   }
 
-  Future<List> getWorkoutIDsByUser(String userId) async {
+  Future<List<String>> getWorkoutIDsByUser(String userId) async {
     var doc = await firestore.collection('workoutsByUser').doc(userId).get();
     if (doc.exists) {
-      List workoutIDs = doc.data()?['workoutIDs'] ?? [];
+      List<dynamic> workoutIDsDynamic = doc.data()?['workoutIDs'] ?? [];
+      // Explicitly cast each element in the list to String
+      List<String> workoutIDs =
+          workoutIDsDynamic.map((e) => e.toString()).toList();
       return workoutIDs;
     }
     return [];
   }
-
-  //return a Workout object from a workout id
 
   Future<void> saveWorkout(Workout workout, String userId) async {
     DocumentReference workoutRef = await workoutsCollection.add({
@@ -109,8 +134,8 @@ class DatabaseService {
   }
 
   //Write a function that returns a list of workouts from a list of workoutIDs
-  Future<List<Workout>> getWorkoutsByUser(String userId) async {
-    List workoutIDs = await getWorkoutIDsByUser(userId);
+  Future<List<Workout>> getCreatedWorkoutsByUser(String userId) async {
+    List<String> workoutIDs = await getWorkoutIDsByUser(userId);
     List<Workout> workouts = [];
 
     for (var workoutID in workoutIDs) {
@@ -149,7 +174,7 @@ class DatabaseService {
 
   Future<List<List<dynamic>>> getCompletedWorkoutsByUser(String userId) async {
     var doc = await firestore.collection('completedWorkouts').doc(userId).get();
-
+    //Save to new CompletedWorkout() object and return that.
     if (doc.exists) {
       List workoutIDs = doc.data()?['workoutIDs'] ?? [];
       List timestamps = doc.data()?['timestamps'] ?? [];
@@ -180,6 +205,7 @@ class DatabaseService {
   }
 
   Future<List<List<dynamic>>> getActivityDashboardWorkouts(
+      //TODO:
       String userId) async {
     var followingSnapshot = await FirebaseFirestore.instance
         .collection('following')
@@ -206,5 +232,93 @@ class DatabaseService {
         .sort((a, b) => (b[2] as Timestamp).compareTo(a[2] as Timestamp));
 
     return allCompletedWorkouts;
+  }
+
+  Future<void> followUser(String userIDCurrUser, String userIDOther) async {
+    DocumentReference userFollowingRef =
+        firestore.collection('following').doc(userIDCurrUser);
+    DocumentReference otherUserFollowersRef =
+        firestore.collection('followers').doc(userIDOther);
+
+    // Transaction for userIDCurrUser's following update
+    await firestore.runTransaction((transaction) async {
+      DocumentSnapshot userFollowingSnapshot =
+          await transaction.get(userFollowingRef);
+
+      if (userFollowingSnapshot.exists) {
+        List following = userFollowingSnapshot.get('following');
+        if (!following.contains(userIDOther)) {
+          following.add(userIDOther);
+          transaction.update(userFollowingRef, {'following': following});
+        }
+      } else {
+        transaction.set(userFollowingRef, {
+          'following': [userIDOther]
+        });
+      }
+    });
+
+    // Transaction for userIDOther's followers update
+    await firestore.runTransaction((transaction) async {
+      DocumentSnapshot otherUserFollowersSnapshot =
+          await transaction.get(otherUserFollowersRef);
+
+      if (otherUserFollowersSnapshot.exists) {
+        List followers = otherUserFollowersSnapshot.get('followers');
+        if (!followers.contains(userIDCurrUser)) {
+          followers.add(userIDCurrUser);
+          transaction.update(otherUserFollowersRef, {'followers': followers});
+        }
+      } else {
+        transaction.set(otherUserFollowersRef, {
+          'followers': [userIDCurrUser]
+        });
+      }
+    });
+  }
+
+  Future<void> unfollowUser(String userIDCurrUser, String userIDOther) async {
+    DocumentReference userFollowingRef =
+        firestore.collection('following').doc(userIDCurrUser);
+    DocumentReference otherUserFollowersRef =
+        firestore.collection('followers').doc(userIDOther);
+
+    // Transaction for removing from userIDCurrUser's following
+    await firestore.runTransaction((transaction) async {
+      DocumentSnapshot userFollowingSnapshot =
+          await transaction.get(userFollowingRef);
+
+      if (userFollowingSnapshot.exists) {
+        List following = userFollowingSnapshot.get('following');
+        if (following.contains(userIDOther)) {
+          following.remove(userIDOther);
+          transaction.update(userFollowingRef, {'following': following});
+        }
+      }
+    });
+
+    // Transaction for removing from userIDOther's followers
+    await firestore.runTransaction((transaction) async {
+      DocumentSnapshot otherUserFollowersSnapshot =
+          await transaction.get(otherUserFollowersRef);
+
+      if (otherUserFollowersSnapshot.exists) {
+        List followers = otherUserFollowersSnapshot.get('followers');
+        if (followers.contains(userIDCurrUser)) {
+          followers.remove(userIDCurrUser);
+          transaction.update(otherUserFollowersRef, {'followers': followers});
+        }
+      }
+    });
+  }
+
+  Future<bool> isFollowing(String userIDCurrUser, String userIDOther) async {
+    DocumentSnapshot followingDoc =
+        await firestore.collection('following').doc(userIDCurrUser).get();
+    if (followingDoc.exists) {
+      List followingList = followingDoc.get('following');
+      return followingList.contains(userIDOther);
+    }
+    return false;
   }
 }

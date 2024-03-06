@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:atlas/services/database.dart'; // Import your DatabaseService
 import 'following_page.dart';
 import 'followers_page.dart';
+import 'package:atlas/models/workout.dart';
 import 'workout_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -16,10 +17,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   // Widget to build the count button
-  Widget _buildCountButton(String label, Future<List<dynamic>> countFuture) {
-    return FutureBuilder<List<dynamic>>(
-      future: countFuture,
-      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+  Widget _buildCountButton(String label, Future<List<String>> users) {
+    return FutureBuilder<List<String>>(
+      future: users,
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show a loading indicator while waiting for the Future to complete
           return const CircularProgressIndicator();
@@ -41,31 +42,61 @@ class _ProfilePageState extends State<ProfilePage> {
                   context,
                   MaterialPageRoute(
                       // pass the list input to display on the corresponding page
-                      builder: (context) =>
-                          FollowersPage(followers: countFuture)),
+                      builder: (context) => FollowersPage(followers: users)),
                 );
               } else if (label == 'Following') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       // pass the list input to display on the corresponding page
-                      builder: (context) =>
-                          FollowingPage(following: countFuture)),
+                      builder: (context) => FollowingPage(following: users)),
                 );
-              } else if (label == 'Workouts') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      // pass the list input to display on the corresponding page
-                      builder: (context) => WorkoutPage(workouts: countFuture)),
-                );
-                // Navigate to the following page
               }
             },
             child: Column(
               children: [
                 Text('$count', style: const TextStyle(fontSize: 20)),
                 Text(label),
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildWorkoutsButton(Future<List<Workout>> workoutListFuture) {
+    return FutureBuilder<List<Workout>>(
+      future: workoutListFuture,
+      builder: (BuildContext context, AsyncSnapshot<List<Workout>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading indicator while waiting for the Future to complete
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // Handle any errors that occur during fetching the data
+          return Text('Error: ${snapshot.error}');
+        } else {
+          // Once the Future is complete, use the length of the list
+          int count = snapshot.data?.length ?? 0;
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: const RoundedRectangleBorder(),
+            ),
+            onPressed: () {
+              // If the button is pressed, navigate to the WorkoutPage
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // Pass the Future directly to the WorkoutPage
+                  builder: (context) =>
+                      WorkoutPage(workouts: workoutListFuture),
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                Text('$count', style: const TextStyle(fontSize: 20)),
+                const Text('Workouts'),
               ],
             ),
           );
@@ -144,12 +175,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   .spaceEvenly, // Align the buttons to the right of the screen
 
               children: [
+                _buildWorkoutsButton(
+                    DatabaseService().getCreatedWorkoutsByUser(userId)),
                 _buildCountButton(
-                    'Workouts', DatabaseService().getWorkoutsByUser(userId)),
+                    'Followers', DatabaseService().getFollowerIDs(userId)),
                 _buildCountButton(
-                    'Followers', DatabaseService().getFollowers(userId)),
-                _buildCountButton(
-                    'Following', DatabaseService().getFollowing(userId)),
+                    'Following', DatabaseService().getFollowingIDs(userId)),
               ],
             ),
             //add space between divider and above
