@@ -52,19 +52,14 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Workout Flow'),
-      ),
-      body: GestureDetector(
-        onTap: _pauseResumeTimer,
-        child: Center(
-          child: Text(
-            _formatTime(_currentSeconds),
-            style: TextStyle(
-              fontSize: 48,
-              color: _isPaused ? Colors.red : Colors.white,
-            ),
+    return GestureDetector(
+      onTap: _pauseResumeTimer,
+      child: Center(
+        child: Text(
+          _formatTime(_currentSeconds),
+          style: TextStyle(
+            fontSize: 48,
+            color: _isPaused ? Colors.red : Colors.white,
           ),
         ),
       ),

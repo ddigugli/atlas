@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:atlas/models/workout.dart';
 import 'package:atlas/models/exercise.dart';
+import 'package:atlas/screens/home/workout_page/timer.dart';
 
 class WorkoutFlow extends StatefulWidget {
   @override
@@ -49,34 +50,43 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                 });
               },
               itemBuilder: (context, index) {
-                return Card(
-                  margin: EdgeInsets.all(16.0),
-                  elevation: 4, // Add elevation for a defined border
-                  color: Colors.blueGrey[800], // Set a darker color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0), // Add rounded corners
-                    side: BorderSide(color: Colors.black, width: 1), // Add a border
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Sets: ${exercises[currentIndex].sets}',
-                        style: TextStyle(fontSize: 18),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Card(
+                    elevation: 4, // Add elevation for a defined border
+                    color: Colors.blueGrey[800], // Set a darker color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0), // Add rounded corners
+                      side: BorderSide(color: Colors.black, width: 1), // Add a border
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sets: ${exercises[currentIndex].sets}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Text(
+                            'Reps: ${exercises[currentIndex].reps}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
                       ),
-                      Text(
-                        'Reps: ${exercises[currentIndex].reps}',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-      )],
+          SizedBox(height: 16), // Add space between the Card and TimerWidget
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TimerWidget(), // Replace the empty space with the TimerWidget
+          ),
+          SizedBox(height: 16), // Add space below the TimerWidget
+        ],
       ),
     );
   }
