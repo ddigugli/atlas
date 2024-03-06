@@ -28,7 +28,7 @@ class DatabaseService {
   Future<List<String>> getFollowingIDs(String userId) async {
     var doc = await firestore.collection('following').doc(userId).get();
     if (doc.exists) {
-      List<dynamic> followingDynamic = doc.data()?['followers'] ?? [];
+      List<dynamic> followingDynamic = doc.data()?['following'] ?? [];
       // Explicitly cast each element in the list to String
       List<String> following =
           followingDynamic.map((e) => e.toString()).toList();
@@ -98,13 +98,14 @@ class DatabaseService {
   Future<List<String>> getWorkoutIDsByUser(String userId) async {
     var doc = await firestore.collection('workoutsByUser').doc(userId).get();
     if (doc.exists) {
-      List<String> workoutIDs = doc.data()?['workoutIDs'] ?? [];
+      List<dynamic> workoutIDsDynamic = doc.data()?['workoutIDs'] ?? [];
+      // Explicitly cast each element in the list to String
+      List<String> workoutIDs =
+          workoutIDsDynamic.map((e) => e.toString()).toList();
       return workoutIDs;
     }
     return [];
   }
-
-  //return a Workout object from a workout id
 
   Future<void> saveWorkout(Workout workout, String userId) async {
     DocumentReference workoutRef = await workoutsCollection.add({

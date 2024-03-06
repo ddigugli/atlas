@@ -16,7 +16,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true, // Horizontally center the title
-
         title: const Text(
           'Workouts',
           textAlign: TextAlign.center, // Center the text within the app bar
