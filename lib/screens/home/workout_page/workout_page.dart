@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:atlas/screens/home/workout_page/workout_builder.dart'; // Ensure this import path is correct
+import 'package:atlas/screens/home/workout_page/timer.dart';
 
 // Workout Page
 class WorkoutPage extends StatefulWidget {
@@ -17,17 +18,35 @@ class _WorkoutPageState extends State<WorkoutPage> {
         title: const Text('Workout Page'),
       ),
       body: Center(
-        child: ElevatedButton.icon(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      const WorkoutBuilder()), // Ensure the class name is correct
-            );
-          },
-          icon: const Icon(Icons.add), // "+" Icon
-          label: const Text('Create Workout'), // Button text
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TimerWidget(seconds: 60),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.directions_run),
+              label: const Text('Start Workout'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const WorkoutBuilder(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Create Workout'),
+            ),
+          ],
         ),
       ),
     );
