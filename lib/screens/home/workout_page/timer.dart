@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class TimerWidget extends StatefulWidget {
-  final int seconds;
-
-  TimerWidget({required this.seconds});
+  TimerWidget();
 
   @override
   _TimerWidgetState createState() => _TimerWidgetState();
@@ -18,7 +16,7 @@ class _TimerWidgetState extends State<TimerWidget> {
   @override
   void initState() {
     super.initState();
-    _currentSeconds = widget.seconds;
+    _currentSeconds = 0; // Change here to start from zero
     _startTimer();
   }
 
@@ -32,11 +30,7 @@ class _TimerWidgetState extends State<TimerWidget> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (!_isPaused) {
         setState(() {
-          if (_currentSeconds > 0) {
-            _currentSeconds--;
-          } else {
-            _timer.cancel();
-          }
+          _currentSeconds++; // Change here to count up
         });
       }
     });
@@ -48,42 +42,26 @@ class _TimerWidgetState extends State<TimerWidget> {
     });
   }
 
-  Widget _buildProgressBar() {
-    double progress = 1 - (_currentSeconds / widget.seconds);
-    return LinearProgressIndicator(
-      value: progress,
-      color: Colors.blue,
-      backgroundColor: Colors.grey,
-    );
+  String _formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    String formattedMinutes = minutes.toString().padLeft(2, '0');
+    String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
+    return '$formattedMinutes:$formattedSeconds';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Workout Flow'),
-      ),
-      body: Stack(
-        children: [
-          GestureDetector(
-            onTap: _pauseResumeTimer,
-            child: Center(
-              child: Text(
-                '$_currentSeconds',
-                style: TextStyle(
-                  fontSize: 48,
-                  color: _isPaused ? Colors.red : Colors.white,
-                ),
-              ),
-            ),
+    return GestureDetector(
+      onTap: _pauseResumeTimer,
+      child: Center(
+        child: Text(
+          _formatTime(_currentSeconds),
+          style: TextStyle(
+            fontSize: 48,
+            color: _isPaused ? Colors.red : Colors.white,
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildProgressBar(),
-          ),
-        ],
+        ),
       ),
     );
   }
