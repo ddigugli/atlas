@@ -1,73 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:atlas/services/database.dart'; // Import your DatabaseService
-import 'package:atlas/screens/home/default_templates/default_profile.dart';
+import 'package:provider/provider.dart';
+import 'package:atlas/services/database.dart';
+import 'profile_wrapper.dart';
+import 'package:atlas/models/user.dart';
 
 class FollowersPage extends StatefulWidget {
-  final Future<List<dynamic>> followers;
+  final Future<List<String>> followers;
 
-  const FollowersPage({super.key, required this.followers});
+  const FollowersPage({Key? key, required this.followers}) : super(key: key);
 
   @override
   State<FollowersPage> createState() => _FollowersPageState();
 }
 
 class _FollowersPageState extends State<FollowersPage> {
+  Future<List<AtlasUser>> _getFollowersUsers() async {
+    List<String> userIds = await widget.followers;
+    List<AtlasUser> users = [];
+    for (String userId in userIds) {
+      var user = await DatabaseService().getAtlasUser(userId);
+      users.add(user);
+    }
+    return users;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Followers',
-          textAlign: TextAlign.center, // Center the text within the app bar
-        ),
-        centerTitle: true, // Horizontally center the title
+        title: const Text('Followers'),
+        centerTitle: true,
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future:
-            widget.followers, // Use the followers future passed to the widget
+      body: FutureBuilder<List<AtlasUser>>(
+        future: _getFollowersUsers(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            List<dynamic> followers = snapshot.data!;
+            // Consider customizing this message based on the error
+            return const Center(
+                child: Text('Something went wrong. Please try again later.'));
+          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return ListView.builder(
-              itemCount: followers.length,
+              itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                var userId = followers[index];
-                return FutureBuilder<Map<String, dynamic>>(
-                  future: DatabaseService().getUserData(userId),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (snapshot.hasData) {
-                      Map<String, dynamic> follower = snapshot.data!;
-                      return Card(
-                        child: ListTile(
-                            title: Text(
-                                '@${follower['username']}'), // Corrected map access
-                            subtitle: Text(
-                                '${follower['firstName'] ?? ''} ${follower['lastName'] ?? ''}'), // Corrected map access with null check
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DefaultProfile(
-                                      username: follower['username']),
-                                ),
-                              );
-                            }),
-                      );
-                    } else {
-                      return const Center(child: Text('No followers found'));
-                    }
-                  },
+                var user = snapshot.data![index];
+                return Card(
+                  child: ListTile(
+                    title: Text('@${user.username}'),
+                    subtitle: Text('${user.firstName} ${user.lastName}'),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileWrapper(userID: user.uid),
+                      ),
+                    ),
+                  ),
                 );
-                //
-                // Access follower data assuming it's a Map
               },
             );
           } else {

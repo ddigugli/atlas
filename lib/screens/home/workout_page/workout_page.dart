@@ -14,6 +14,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true, // Horizontally center the title
+
         title: const Text('Workout Page'),
       ),
       body: Center(

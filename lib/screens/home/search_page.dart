@@ -1,5 +1,9 @@
+import 'package:atlas/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:atlas/screens/home/default_templates/default_profile.dart';
+import 'package:atlas/screens/home/profile_page/profile_wrapper.dart';
+import 'package:atlas/services/database.dart';
 
 // Search Page
 class SearchPage extends StatefulWidget {
@@ -11,34 +15,26 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> users = [];
-  List<Map<String, dynamic>> filteredUsers = [];
+  List<AtlasUser> users = [];
+  List<AtlasUser> filteredUsers = [];
   bool showSuggestions = false;
 
   @override
   void initState() {
     super.initState();
-    getUsers();
-  }
-
-  void getUsers() async {
-    // query users
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('users').get();
-
-    setState(() {
-      users = querySnapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
+    DatabaseService().getUsers().then((value) {
+      setState(() {
+        users = value;
+        filteredUsers = value;
+      });
     });
   }
 
   void filterUsers(String query) {
     setState(() {
       filteredUsers = users
-          .where((user) => user['username']
-              .toLowerCase()
-              .contains(query.toLowerCase()))
+          .where((user) =>
+              user.username.toLowerCase().contains(query.toLowerCase()))
           .toList();
       showSuggestions = true;
     });
@@ -48,6 +44,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'Find Friends, Workouts, and Groups',
           style: Theme.of(context).textTheme.titleMedium,
@@ -81,9 +78,17 @@ class _SearchPageState extends State<SearchPage> {
                 itemCount: filteredUsers.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(filteredUsers[index]['username']),
-                    // Add functionality for when you tap on a result
-                  );
+                      title: Text(filteredUsers[index].username),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileWrapper(
+                                userID: filteredUsers[index]
+                                    .uid), //NEED TO FIX THIS!!
+                          ),
+                        );
+                      });
                 },
               ),
             ),
