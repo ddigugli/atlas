@@ -215,7 +215,7 @@ class _DefaultProfileState extends State<DefaultProfile> {
                       padding:
                           EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
                       child: CircleAvatar(
-                        radius: 30,
+                        radius: 40,
                         backgroundImage: NetworkImage(
                             "https://image-cdn.essentiallysports.com/wp-content/uploads/arnold-schwarzenegger-volume-workout-1110x788.jpg"), // Replace with user's profile picture
                       ),
