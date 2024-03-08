@@ -5,7 +5,7 @@ import 'package:atlas/screens/home/workout_page/timer.dart';
 import 'package:atlas/models/workout.dart';
 import 'package:atlas/services/database.dart';
 import 'package:provider/provider.dart';
-import 'package:atlas/screens/home/profile_page/profile_page.dart';
+import 'package:atlas/screens/home/home_page.dart';
 
 class WorkoutFlow extends StatefulWidget {
   final Workout workout;
@@ -88,13 +88,13 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                               DatabaseService()
                                   .saveCompletedWorkout(widget.workout, userId);
                               //navigate to the profile page
+                              //Clear the navigator stack
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProfilePage()), // Assuming ProfilePage is your destination page
-                                (Route<dynamic> route) =>
-                                    false, // This predicate always returns false, removing all routes
+                                  builder: (context) => const MyHomePage(),
+                                ),
+                                (route) => false,
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -155,7 +155,9 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                                   ? 'Weight: ${exercises[index].weight}'
                                   : 'Weight: ${exercises[index].weight} lbs',
                               style: const TextStyle(fontSize: 18),
-                            )
+                            ),
+                            const SizedBox(height: 16),
+                            //ADD STOPWATCH HERE!
                           ],
                         ),
                       ),
@@ -166,6 +168,7 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
             ),
           ),
           const SizedBox(height: 16), // Space between the Card and TimerWidget
+
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: TimerWidget(), // The TimerWidget

@@ -62,7 +62,8 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
             return ListView.builder(
               itemCount: workouts.length,
               itemBuilder: (BuildContext context, int index) {
-                return WorkoutCard(workout: workouts[index]);
+                return WorkoutCard(
+                    workout: workouts[workouts.length - index - 1]);
               },
             );
           } else {
