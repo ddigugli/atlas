@@ -34,13 +34,65 @@ class WorkoutCard extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Completed by: ${workout.completedBy.firstName} ${workout.completedBy.lastName}',
+            Row(
+              /* Row containing User image + name + time completed */
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /* Column for image */
+                const Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: NetworkImage(
+                        "https://image-cdn.essentiallysports.com/wp-content/uploads/arnold-schwarzenegger-volume-workout-1110x788.jpg", // replace with user image
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                    width:
+                        16), // Add spacing between image column and text column
+                /* Column for name and time completed */
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '${workout.completedBy.firstName} ${workout.completedBy.lastName}',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 2),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(Icons.task_alt, size: 12),
+                        /* Check mark */
+                        const SizedBox(width: 2),
+                        /* aesthetic space */
+                        Text(
+                          '$formattedTimestamp',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text('Completed: $formattedTimestamp'),
             const SizedBox(height: 8),
-            Text(workout.workoutName),
+            Text(
+              workout.workoutName,
+              style: TextStyle(fontSize: 20),
+            ),
+            /*
+            Text(
+              workout.description,
+              style: TextStyle(fontSize: 16),
+            )
+            */
           ],
         ),
         subtitle: Column(
