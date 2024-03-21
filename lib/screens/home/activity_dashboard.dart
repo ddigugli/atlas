@@ -22,7 +22,7 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
     List<CompletedWorkout> completedWorkouts = [];
 
     /* create a list to store the completed workouts */
-    List<String> userIDs = await db.getFollowerIDs(userID);
+    List<String> userIDs = await db.getFollowingIDs(userID);
 
     /* add the current user's ID to the list */
     userIDs.add(userID);
