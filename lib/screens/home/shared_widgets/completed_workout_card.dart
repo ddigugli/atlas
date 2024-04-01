@@ -1,6 +1,7 @@
 import 'package:atlas/models/workout.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:atlas/screens/home/profile_page/profile_picture_service.dart';
 
 /* A card widget that displays information about a completed workout. */
 class CompletedWorkoutCard extends StatelessWidget {
@@ -44,13 +45,29 @@ class CompletedWorkoutCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /* Column for image */
-                const Column(
+                Column(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: NetworkImage(
-                        "https://image-cdn.essentiallysports.com/wp-content/uploads/arnold-schwarzenegger-volume-workout-1110x788.jpg", // replace with user image
-                      ),
+                    FutureBuilder<String>(
+                      future: ProfilePictureService()
+                          .getProfilePicture(workout.completedBy.uid),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        Widget imageWidget;
+                        if (snapshot.connectionState ==
+                                ConnectionState.waiting ||
+                            !snapshot.hasData) {
+                          imageWidget = const CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.grey, // Placeholder color
+                          );
+                        } else {
+                          imageWidget = CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(snapshot.data!),
+                          );
+                        }
+                        return imageWidget;
+                      },
                     ),
                   ],
                 ),

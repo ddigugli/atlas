@@ -48,7 +48,7 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Activity Dashboard'),
+        title: const Center(child: Text('ATLAS FIT')),
       ),
       /* display a list of completed workouts */
       body: FutureBuilder<List<CompletedWorkout>>(

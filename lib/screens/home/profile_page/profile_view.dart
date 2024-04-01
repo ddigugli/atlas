@@ -7,6 +7,7 @@ import 'package:atlas/screens/home/profile_page/created_workouts_page.dart';
 import 'package:provider/provider.dart';
 import 'package:atlas/models/user.dart';
 import 'package:atlas/models/workout.dart';
+import 'package:atlas/screens/home/profile_page/profile_picture_service.dart';
 
 class ProfileView extends StatefulWidget {
   final String userID;
@@ -170,23 +171,20 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    /* get atlas user from provider stream */
     final atlasUser = Provider.of<AtlasUser?>(context, listen: false);
     final userIdCurrUser = atlasUser?.uid ?? '';
 
     return FutureBuilder<AtlasUser>(
-      future: DatabaseService()
-          .getAtlasUser(widget.userID), // Future that gets the other users data
+      future: DatabaseService().getAtlasUser(widget.userID),
       builder: (context, snapshot) {
-        /* Show a loading indicator while waiting for the Future to complete */
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError || !snapshot.hasData) {
           return const Center(child: Text('User not found or error occurred'));
         }
 
-        /* Once the Future is complete, use the data get the user object*/
         final AtlasUser userData = snapshot.data!;
 
         return Scaffold(
@@ -197,7 +195,6 @@ class _ProfileViewState extends State<ProfileView> {
                 const Spacer(),
                 const SizedBox(width: 40),
                 const Spacer(),
-                /* Add a button to navigate to the settings page */
                 IconButton(
                   icon: const Icon(Icons.settings),
                   onPressed: () {
@@ -213,17 +210,34 @@ class _ProfileViewState extends State<ProfileView> {
           ),
           body: ListView(
             children: [
-              /* Column containing user image + name + followers/following/workouts */
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(
                   children: [
-                    const Padding(
-                      padding:
-                          EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage(
-                            "https://image-cdn.essentiallysports.com/wp-content/uploads/arnold-schwarzenegger-volume-workout-1110x788.jpg"), // Replace with user's profile picture
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 20.0, left: 20.0, right: 20.0),
+                      // Replaced static image with FutureBuilder for dynamic profile picture
+                      child: FutureBuilder<String>(
+                        future: ProfilePictureService()
+                            .getProfilePicture(userData.uid),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String> snapshot) {
+                          Widget imageWidget;
+                          if (snapshot.connectionState ==
+                                  ConnectionState.waiting ||
+                              !snapshot.hasData) {
+                            imageWidget = const CircleAvatar(
+                              radius: 40,
+                              backgroundColor: Colors.grey, // Placeholder color
+                            );
+                          } else {
+                            imageWidget = CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(snapshot.data!),
+                            );
+                          }
+                          return imageWidget;
+                        },
                       ),
                     ),
                     const SizedBox(width: 10.0),
