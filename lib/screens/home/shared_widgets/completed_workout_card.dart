@@ -60,6 +60,8 @@ class CompletedWorkoutCard extends StatelessWidget {
     */
 
     return Card(
+      color:
+          const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
       child: ListTile(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +84,7 @@ class CompletedWorkoutCard extends StatelessWidget {
                             !snapshot.hasData) {
                           imageWidget = const CircleAvatar(
                             radius: 20,
-                            backgroundColor: Colors.grey, // Placeholder color
+                            backgroundColor: Colors.grey,
                           );
                         } else {
                           imageWidget = CircleAvatar(

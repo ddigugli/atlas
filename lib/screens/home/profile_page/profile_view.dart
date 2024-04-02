@@ -37,6 +37,7 @@ class _ProfileViewState extends State<ProfileView> {
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
               shape: const RoundedRectangleBorder(),
+              foregroundColor: const Color.fromARGB(255, 143, 197, 255),
             ),
             onPressed: () {
               /* If the button is pressed, navigate to the FollowersPage or FollowingPage */
@@ -59,8 +60,12 @@ class _ProfileViewState extends State<ProfileView> {
             /* Display the number of followers or following */
             child: Column(
               children: [
-                Text('$count', style: const TextStyle(fontSize: 20)),
-                Text(label),
+                Text('$count',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(label,
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.bold)),
               ],
             ),
           );
@@ -86,6 +91,7 @@ class _ProfileViewState extends State<ProfileView> {
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
               shape: const RoundedRectangleBorder(),
+              foregroundColor: const Color.fromARGB(255, 143, 197, 255),
             ),
             onPressed: () {
               /* If the button is pressed, navigate to the WorkoutPage */
@@ -101,8 +107,13 @@ class _ProfileViewState extends State<ProfileView> {
             /* Display the number of workouts */
             child: Column(
               children: [
-                Text('$count', style: const TextStyle(fontSize: 20)),
-                const Text('Workouts'),
+                Text('$count',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Workouts',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           );
@@ -227,7 +238,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   ConnectionState.waiting ||
                               !snapshot.hasData) {
                             imageWidget = const CircleAvatar(
-                              radius: 40,
+                              radius: 35,
                               backgroundColor: Colors.grey, // Placeholder color
                             );
                           } else {
@@ -266,12 +277,27 @@ class _ProfileViewState extends State<ProfileView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildWorkoutsButton(DatabaseService()
-                        .getCreatedWorkoutsByUser(widget.userID)),
-                    _buildCountButton('Followers',
-                        DatabaseService().getFollowerIDs(widget.userID)),
-                    _buildCountButton('Following',
-                        DatabaseService().getFollowingIDs(widget.userID)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal:
+                              0.0), // Adjust the horizontal padding as needed
+                      child: _buildWorkoutsButton(DatabaseService()
+                          .getCreatedWorkoutsByUser(widget.userID)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal:
+                              0.0), // Adjust the horizontal padding as needed
+                      child: _buildCountButton('Followers',
+                          DatabaseService().getFollowerIDs(widget.userID)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal:
+                              0.0), // Adjust the horizontal padding as needed
+                      child: _buildCountButton('Following',
+                          DatabaseService().getFollowingIDs(widget.userID)),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 15.0),
