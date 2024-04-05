@@ -1,19 +1,15 @@
 import 'package:atlas/screens/home/shared_widgets/count_button.dart';
 import 'package:atlas/screens/home/shared_widgets/following_unfollowing_button.dart';
 import 'package:flutter/material.dart';
-import 'package:atlas/services/database.dart'; // Ensure this path is correct for your DatabaseService
+import 'package:atlas/services/database.dart';
 import 'package:atlas/screens/home/profile_page/settings_page.dart';
-import 'package:atlas/screens/home/profile_page/following_page.dart';
-import 'package:atlas/screens/home/profile_page/followers_page.dart';
-import 'package:atlas/screens/home/profile_page/created_workouts_page.dart';
 import 'package:provider/provider.dart';
 import 'package:atlas/models/user.dart';
-import 'package:atlas/models/workout.dart';
 
 class ProfileView extends StatefulWidget {
   final String userID;
 
-  const ProfileView({Key? key, required this.userID}) : super(key: key);
+  const ProfileView({super.key, required this.userID});
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
