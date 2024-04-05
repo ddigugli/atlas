@@ -2,10 +2,14 @@ import 'package:atlas/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:atlas/models/exercise.dart';
 import 'package:atlas/models/workout.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class DatabaseService {
   /* Firestore initialization */
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  /* Firebase Storage initialization */
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   /* GENERAL FUNCTIONS */
 
@@ -48,7 +52,10 @@ class DatabaseService {
           email: doc.data()?['email'] ?? '',
           firstName: doc.data()?['firstName'] ?? '',
           lastName: doc.data()?['lastName'] ?? '',
-          username: doc.data()?['username'] ?? '');
+          username: doc.data()?['username'] ?? '',
+          followerCount: doc.data()?['followerCount'] ?? 0,
+          followingCount: doc.data()?['followingCount'] ?? 0,
+          workoutCount: doc.data()?['workoutCount'] ?? 0);
     } else {
       /* if the document does not exist, throw an exception */
       throw Exception('User: $userId not found');
@@ -197,10 +204,16 @@ class DatabaseService {
       await userWorkoutsRef.set({
         'workoutIDs': [workout.workoutID],
       });
+      await firestore.collection('users').doc(workout.createdBy.uid).update({
+        'workoutCount': FieldValue.increment(1),
+      });
     } else {
       // If the document exists, update it with the new workout ID
       await userWorkoutsRef.update({
-        'workoutIDs': FieldValue.arrayUnion([workout.workoutID])
+        'workoutIDs': FieldValue.arrayUnion([workout.workoutID]),
+      });
+      await firestore.collection('users').doc(workout.createdBy.uid).update({
+        'workoutCount': FieldValue.increment(1),
       });
     }
   }
@@ -292,11 +305,15 @@ class DatabaseService {
         if (!following.contains(userIDOther)) {
           following.add(userIDOther);
           transaction.update(userFollowingRef, {'following': following});
+          transaction.update(firestore.collection('users').doc(userIDCurrUser),
+              {'followingCount': FieldValue.increment(1)});
         }
       } else {
         transaction.set(userFollowingRef, {
-          'following': [userIDOther]
+          'following': [userIDOther],
         });
+        transaction.update(firestore.collection('users').doc(userIDCurrUser),
+            {'followingCount': FieldValue.increment(1)});
       }
     });
 
@@ -311,11 +328,15 @@ class DatabaseService {
         if (!followers.contains(userIDCurrUser)) {
           followers.add(userIDCurrUser);
           transaction.update(otherUserFollowersRef, {'followers': followers});
+          transaction.update(firestore.collection('users').doc(userIDOther),
+              {'followerCount': FieldValue.increment(1)});
         }
       } else {
         transaction.set(otherUserFollowersRef, {
-          'followers': [userIDCurrUser]
+          'followers': [userIDCurrUser],
         });
+        transaction.update(firestore.collection('users').doc(userIDOther),
+            {'followerCount': FieldValue.increment(1)});
       }
     });
   }
@@ -339,6 +360,8 @@ class DatabaseService {
         if (following.contains(userIDOther)) {
           following.remove(userIDOther);
           transaction.update(userFollowingRef, {'following': following});
+          transaction.update(firestore.collection('users').doc(userIDCurrUser),
+              {'followingCount': FieldValue.increment(-1)});
         }
       }
     });
@@ -354,6 +377,8 @@ class DatabaseService {
         if (followers.contains(userIDCurrUser)) {
           followers.remove(userIDCurrUser);
           transaction.update(otherUserFollowersRef, {'followers': followers});
+          transaction.update(firestore.collection('users').doc(userIDOther),
+              {'followerCount': FieldValue.increment(-1)});
         }
       }
     });
@@ -382,13 +407,46 @@ class DatabaseService {
         .get();
     List<AtlasUser> users = querySnapshot.docs.map((doc) {
       return AtlasUser(
-        uid: doc.id,
-        email: doc.data()['email'] ?? '',
-        firstName: doc.data()['firstName'] ?? '',
-        lastName: doc.data()['lastName'] ?? '',
-        username: doc.data()['username'] ?? '',
-      );
+          uid: doc.id,
+          email: doc.data()['email'],
+          firstName: doc.data()['firstName'],
+          lastName: doc.data()['lastName'],
+          username: doc.data()['username'],
+          followerCount: doc.data()['followerCount'],
+          followingCount: doc.data()['followingCount'],
+          workoutCount: doc.data()['workoutCount']);
     }).toList();
     return users;
+  }
+
+  /* FIREBASE STORAGE FUNCTIONS */
+
+  /* Function to fetch profile picture */
+  Future<String> getProfilePicture(String userid) async {
+    try {
+      /* Attempt to get the user's profile picture URL document from Firestore */
+      DocumentSnapshot snapshot =
+          await firestore.collection('profilePictureURLs').doc(userid).get();
+
+      String fileUrl;
+      if (snapshot.exists && snapshot.data() is Map) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        /* If the document exists and has a URL, use it */
+        fileUrl = data['url'];
+      } else {
+        /* If the document does not exist, use the default profile picture URL */
+        fileUrl = 'defaultpfp.jpeg';
+      }
+
+      /* Get the download URL for the profile picture from Firebase Storage */
+      String imageUrl =
+          await _storage.ref('profilepictures/$fileUrl').getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      /* In case of any errors, log them and return the default profile picture URL */
+      return await _storage
+          .ref('profilepictures/defaultpfp.jpeg')
+          .getDownloadURL();
+    }
   }
 }
