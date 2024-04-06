@@ -8,10 +8,10 @@ import 'package:atlas/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({Key? key}) : super(key: key);
+  const EditProfilePage({super.key});
 
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
@@ -51,8 +51,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         .set({
       'url': fileName, // Store the fileName as the url
     });
-
-    print("Profile picture updated for user: $userid");
   }
 
   @override
@@ -62,20 +60,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        title: const Text('Edit Profile'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _image != null ? Image.file(_image!) : Text('No image selected.'),
+            _image != null
+                ? Image.file(_image!)
+                : const Text('No image selected.'),
             ElevatedButton(
               onPressed: _pickImage,
-              child: Text('Pick Image'),
+              child: const Text('Pick Image'),
             ),
             ElevatedButton(
               onPressed: () => _uploadImage(userIdCurrUser),
-              child: Text('Upload Image'),
+              child: const Text('Upload Image'),
             ),
           ],
         ),

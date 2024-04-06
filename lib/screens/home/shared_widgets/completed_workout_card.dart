@@ -1,7 +1,7 @@
 import 'package:atlas/models/workout.dart';
+import 'package:atlas/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:atlas/screens/home/profile_page/profile_picture_service.dart';
 
 /* A card widget that displays information about a completed workout. */
 class CompletedWorkoutCard extends StatelessWidget {
@@ -42,23 +42,6 @@ class CompletedWorkoutCard extends StatelessWidget {
           '${timeDifference.inMinutes} minutes ago'; // Format timestamp for less than 1 hour ago
     }
 
-    /*
-    String formattedTimestamp;
-    if (timeDifference.inDays > 1) {
-      formattedTimestamp = DateFormat('h:mm a MMMM d, y')
-          .format(timestampDate); // Format timestamp for more than 1 day ago
-    } else if (timeDifference.inDays == 1) {
-      formattedTimestamp =
-          'Yesterday at ${DateFormat('h:mm a').format(timestampDate)}'; // Format timestamp for yesterday
-    } else if (timeDifference.inHours >= 1) {
-      formattedTimestamp =
-          'Today at ${DateFormat('h:mm a').format(timestampDate)}'; // Format timestamp for today
-    } else {
-      formattedTimestamp =
-          '${timeDifference.inMinutes} minutes ago'; // Format timestamp for less than 1 hour ago
-    }
-    */
-
     return Card(
       color:
           const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
@@ -74,7 +57,7 @@ class CompletedWorkoutCard extends StatelessWidget {
                 Column(
                   children: [
                     FutureBuilder<String>(
-                      future: ProfilePictureService()
+                      future: DatabaseService()
                           .getProfilePicture(workout.completedBy.uid),
                       builder: (BuildContext context,
                           AsyncSnapshot<String> snapshot) {

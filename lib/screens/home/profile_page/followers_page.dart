@@ -4,9 +4,9 @@ import 'package:atlas/services/database.dart';
 import 'package:atlas/models/user.dart';
 
 class FollowersPage extends StatefulWidget {
-  final Future<List<String>> followers;
+  final AtlasUser user;
 
-  const FollowersPage({super.key, required this.followers});
+  const FollowersPage({super.key, required this.user});
 
   @override
   State<FollowersPage> createState() => _FollowersPageState();
@@ -14,7 +14,8 @@ class FollowersPage extends StatefulWidget {
 
 class _FollowersPageState extends State<FollowersPage> {
   Future<List<AtlasUser>> _getFollowersUsers() async {
-    List<String> userIds = await widget.followers;
+    List<String> userIds =
+        await DatabaseService().getFollowerIDs(widget.user.uid);
     List<AtlasUser> users = [];
     for (String userId in userIds) {
       var user = await DatabaseService().getAtlasUser(userId);

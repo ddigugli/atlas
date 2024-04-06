@@ -5,6 +5,9 @@ class AtlasUser {
   final String firstName; // User's first name.
   final String lastName; // User's last name.
   final String username; // User's username.
+  final int followerCount;
+  final int followingCount;
+  final int workoutCount;
 
   /// Constructs a new [AtlasUser] instance.
   /// The [uid], [email], [firstName], [lastName], and [username] parameters are required.
@@ -14,5 +17,8 @@ class AtlasUser {
     required this.firstName,
     required this.lastName,
     required this.username,
+    required this.followerCount,
+    required this.followingCount,
+    required this.workoutCount,
   });
 }

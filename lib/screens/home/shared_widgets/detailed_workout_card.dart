@@ -59,23 +59,24 @@ class DetailedWorkoutCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child:Text(
-                        "${exercise.name}",
+                          child: Text(
+                        exercise.name,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold, // Make the text bold
                               fontSize: 18.0, // Increase the font size
                             ),
                       )),
-                      SizedBox(height: 4.0),
+                      const SizedBox(height: 4.0),
                       Center(
-                        child:Text("${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                fontSize: 18,
-                              ))), // Use the bodyLarge text style for the set
-                      SizedBox(height: 8.0),
+                          child: Text(
+                              "${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    fontSize: 18,
+                                  ))), // Use the bodyLarge text style for the set
+                      const SizedBox(height: 8.0),
                     ],
                   ),
                 );

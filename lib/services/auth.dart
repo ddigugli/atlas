@@ -103,6 +103,9 @@ class AuthService {
           'username': username,
           'firstName': firstName,
           'lastName': lastName,
+          'followerCount': 0,
+          'followingCount': 0,
+          'workoutCount': 0,
         });
       }
 
