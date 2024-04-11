@@ -2,6 +2,7 @@ import 'package:atlas/screens/home/profile_page/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:atlas/services/database.dart';
 import 'package:atlas/models/user.dart';
+import 'package:atlas/screens/home/profile_page/profile_picture_service.dart';
 
 class FollowingPage extends StatefulWidget {
   final AtlasUser user; // Assuming this is a list of user IDs
@@ -53,6 +54,26 @@ class _FollowingPageState extends State<FollowingPage> {
                 var user = snapshot.data![index];
                 return Card(
                   child: ListTile(
+                    leading: FutureBuilder<String>(
+                      future:
+                          ProfilePictureService().getProfilePicture(user.uid),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.connectionState ==
+                                ConnectionState.waiting ||
+                            !snapshot.hasData) {
+                          return CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.grey,
+                          );
+                        } else {
+                          return CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(snapshot.data!),
+                          );
+                        }
+                      },
+                    ),
                     title: Text('@${user.username}'),
                     subtitle: Text('${user.firstName} ${user.lastName}'),
                     onTap: () => Navigator.push(
