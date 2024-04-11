@@ -142,9 +142,9 @@ class CompletedWorkoutCard extends StatelessWidget {
           children: [
             Text(workout.description),
             const SizedBox(height: 8),
-            Text(
-              'Created by: ${workout.createdBy.firstName} ${workout.createdBy.lastName}',
-            ),
+            //Text(
+            //  'Created by: ${workout.createdBy.firstName} ${workout.createdBy.lastName}',
+            //),
           ],
         ),
       ),
