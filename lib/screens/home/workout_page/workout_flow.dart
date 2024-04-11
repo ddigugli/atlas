@@ -132,7 +132,7 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                                 exercises[index]
                                     .name, // Use index instead of currentIndex
                                 style: const TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold),
+                                    fontSize: 36, fontWeight: FontWeight.bold),
                                 textAlign: TextAlign
                                     .center, // Center text horizontally
                               ),
@@ -140,24 +140,51 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                             const SizedBox(
                                 height:
                                     16), // Add some space between the exercise name and details
-                            Text(
-                              'Sets: ${exercises[index].sets}', // Use index to avoid issues during swiping
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              'Reps: ${exercises[index].reps}',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              //add an if statement that checks if the weight has the word "body" in it. If it does, do not display "lbs" after the weight
-                              exercises[index].weight.contains(
-                                      'b') // Check if the weight contains 'b' (for body weight)
-                                  ? 'Weight: ${exercises[index].weight}'
-                                  : 'Weight: ${exercises[index].weight} lbs',
-                              style: const TextStyle(fontSize: 18),
+
+                            Row(
+                              children: [
+                                SizedBox(width: 32),
+                                Icon(Icons.format_list_numbered, size: 36),
+                                SizedBox(
+                                    width:
+                                        8), // Add some space between icon and text
+                                Text(
+                                  ' ${exercises[index].sets} sets', // Use index to avoid issues during swiping
+                                  style: const TextStyle(fontSize: 36),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 16),
-                            //ADD STOPWATCH HERE!
+                            Row(
+                              children: [
+                                SizedBox(width: 32),
+                                Icon(Icons.repeat, size: 36),
+                                SizedBox(width: 8),
+                                Text(
+                                  ' ${exercises[index].reps} reps',
+                                  style: const TextStyle(fontSize: 36),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                SizedBox(width: 32),
+                                Icon(Icons.fitness_center, size: 36),
+                                SizedBox(width: 8),
+                                Text(
+                                  // Add an if statement that checks if the weight has the word "body" in it. If it does, do not display "lbs" after the weight
+                                  exercises[index].weight.contains(
+                                          'b') // Check if the weight contains 'b' (for body weight)
+                                      ? ' ${exercises[index].weight}'
+                                      : ' ${exercises[index].weight} lbs',
+                                  style: const TextStyle(fontSize: 36),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            const SizedBox(height: 16),
+                            // ADD STOPWATCH HERE!
                           ],
                         ),
                       ),
