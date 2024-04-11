@@ -36,6 +36,10 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
       completedWorkouts.addAll(workouts);
     }
 
+    /* sort the completed workouts based on completion date in descending order */
+    completedWorkouts
+        .sort((a, b) => b.completedTime.compareTo(a.completedTime));
+
     /* return the list of completed workouts */
     return completedWorkouts;
   }
@@ -72,8 +76,7 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
             return ListView.builder(
               itemCount: workouts.length,
               itemBuilder: (BuildContext context, int index) {
-                return CompletedWorkoutCard(
-                    workout: workouts[workouts.length - index - 1]);
+                return CompletedWorkoutCard(workout: workouts[index]);
               },
             );
           } else {
