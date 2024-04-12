@@ -205,15 +205,18 @@ class DatabaseService {
         'workoutIDs': [workout.workoutID],
       });
       await firestore.collection('users').doc(workout.createdBy.uid).update({
-        'workoutCount': FieldValue.increment(1),
+        'workoutCount': 1,
       });
     } else {
+      // If the document exists, get the current workoutIDs list
+      List workouts = userWorkoutsDoc.get('workoutIDs');
+
       // If the document exists, update it with the new workout ID
       await userWorkoutsRef.update({
         'workoutIDs': FieldValue.arrayUnion([workout.workoutID]),
       });
       await firestore.collection('users').doc(workout.createdBy.uid).update({
-        'workoutCount': FieldValue.increment(1),
+        'workoutCount': workouts.length + 1,
       });
     }
   }
@@ -306,14 +309,14 @@ class DatabaseService {
           following.add(userIDOther);
           transaction.update(userFollowingRef, {'following': following});
           transaction.update(firestore.collection('users').doc(userIDCurrUser),
-              {'followingCount': FieldValue.increment(1)});
+              {'followingCount': following.length});
         }
       } else {
         transaction.set(userFollowingRef, {
           'following': [userIDOther],
         });
         transaction.update(firestore.collection('users').doc(userIDCurrUser),
-            {'followingCount': FieldValue.increment(1)});
+            {'followingCount': 1});
       }
     });
 
@@ -329,14 +332,14 @@ class DatabaseService {
           followers.add(userIDCurrUser);
           transaction.update(otherUserFollowersRef, {'followers': followers});
           transaction.update(firestore.collection('users').doc(userIDOther),
-              {'followerCount': FieldValue.increment(1)});
+              {'followerCount': followers.length});
         }
       } else {
         transaction.set(otherUserFollowersRef, {
           'followers': [userIDCurrUser],
         });
         transaction.update(firestore.collection('users').doc(userIDOther),
-            {'followerCount': FieldValue.increment(1)});
+            {'followerCount': 1});
       }
     });
   }
@@ -361,7 +364,7 @@ class DatabaseService {
           following.remove(userIDOther);
           transaction.update(userFollowingRef, {'following': following});
           transaction.update(firestore.collection('users').doc(userIDCurrUser),
-              {'followingCount': FieldValue.increment(-1)});
+              {'followingCount': following.length});
         }
       }
     });
@@ -378,7 +381,7 @@ class DatabaseService {
           followers.remove(userIDCurrUser);
           transaction.update(otherUserFollowersRef, {'followers': followers});
           transaction.update(firestore.collection('users').doc(userIDOther),
-              {'followerCount': FieldValue.increment(-1)});
+              {'followerCount': followers.length});
         }
       }
     });
