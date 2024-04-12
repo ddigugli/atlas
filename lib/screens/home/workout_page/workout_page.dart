@@ -20,34 +20,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /*
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const WorkoutFlow(new Workout()),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.directions_run),
-              label: const Text('Start Workout'),
-            ),
-            const SizedBox(height: 16),
-            */
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const WorkoutBuilder(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Create Workout'),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 20.0), // Adjust the value as needed
+              child: TextButton.icon(
+                icon: const Icon(Icons.edit),
+                label: const Text('Create Workout',
+                    style:
+                        TextStyle(color: Color.fromARGB(255, 143, 197, 255))),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WorkoutBuilder(),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
