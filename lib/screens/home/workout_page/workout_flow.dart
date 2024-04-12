@@ -143,9 +143,10 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
 
                             Row(
                               children: [
-                                SizedBox(width: 32),
-                                Icon(Icons.format_list_numbered, size: 36),
-                                SizedBox(
+                                const SizedBox(width: 32),
+                                const Icon(Icons.format_list_numbered,
+                                    size: 36),
+                                const SizedBox(
                                     width:
                                         8), // Add some space between icon and text
                                 Text(
@@ -157,9 +158,9 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                             const SizedBox(height: 16),
                             Row(
                               children: [
-                                SizedBox(width: 32),
-                                Icon(Icons.repeat, size: 36),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 32),
+                                const Icon(Icons.repeat, size: 36),
+                                const SizedBox(width: 8),
                                 Text(
                                   ' ${exercises[index].reps} reps',
                                   style: const TextStyle(fontSize: 36),
@@ -169,9 +170,9 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                             const SizedBox(height: 16),
                             Row(
                               children: [
-                                SizedBox(width: 32),
-                                Icon(Icons.fitness_center, size: 36),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 32),
+                                const Icon(Icons.fitness_center, size: 36),
+                                const SizedBox(width: 8),
                                 Text(
                                   // Add an if statement that checks if the weight has the word "body" in it. If it does, do not display "lbs" after the weight
                                   exercises[index].weight.contains(

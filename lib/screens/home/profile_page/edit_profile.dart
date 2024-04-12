@@ -1,11 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:atlas/models/user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:atlas/services/database.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -16,18 +11,12 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  File? _image; // ignore: unused_field
-  final ImagePicker _picker = ImagePicker();
-  String? _profilePictureUrl; // ignore: unused_field
-  //NEED TO IGNORE UNUSED FIELD. Can't delete those fields.
-
   @override
   void initState() {
     super.initState();
-    _fetchProfilePicture();
   }
 
-  Future<void> _fetchProfilePicture() async {
+  /*Future<void> _fetchProfilePicture() async {
     final atlasUser = Provider.of<AtlasUser?>(context, listen: false);
     final userId = atlasUser?.uid ?? '';
     // Assuming you have a method in your database service to get the profile picture URL
@@ -63,6 +52,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'url': fileName,
     });
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +102,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     'Edit Profile Picture',
                     style: TextStyle(color: Color.fromARGB(255, 143, 197, 255)),
                   ),
-                  onPressed: () => _pickAndUploadImage(userIdCurrUser),
+                  onPressed: () => DatabaseService()
+                      .pickAndUploadImage(userIdCurrUser, "profilepictures"),
                 ),
               ],
             ),

@@ -3,6 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:atlas/models/exercise.dart';
 import 'package:atlas/models/workout.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+//IMAGE PICKING IMPORTS
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'dart:io';
 
 class DatabaseService {
   /* Firestore initialization */
@@ -451,5 +455,39 @@ class DatabaseService {
           .ref('profilepictures/defaultpfp.jpeg')
           .getDownloadURL();
     }
+  }
+
+  Future<String> fetchProfilePicture(String userId) async {
+    // Assuming you have a method in your database service to get the profile picture URL
+    final url = await getProfilePicture(userId);
+    return url;
+  }
+
+  Future<void> pickAndUploadImage(String userId, String bucket) async {
+    final ImagePicker picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File image = File(pickedFile.path);
+      //setState(() {
+      // _image = image;
+      //});
+      await uploadImage(userId, image, bucket);
+      //   await _fetchProfilePicture(); // Refresh profile picture after uploading
+    }
+  }
+
+  Future<void> uploadImage(String userId, File image, String bucket) async {
+    String fileExtension = path.extension(image.path);
+    String fileName = "$userId$fileExtension";
+    Reference storageRef = FirebaseStorage.instance.ref('$bucket/$fileName');
+    await storageRef.putFile(image);
+    // Update Firestore with the new file name
+    await FirebaseFirestore.instance
+        .collection('profilePictureURLs')
+        .doc(userId)
+        .set({
+      'url': fileName,
+    });
   }
 }
