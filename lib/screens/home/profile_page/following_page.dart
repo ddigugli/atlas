@@ -53,6 +53,25 @@ class _FollowingPageState extends State<FollowingPage> {
                 var user = snapshot.data![index];
                 return Card(
                   child: ListTile(
+                    leading: FutureBuilder<String>(
+                      future: DatabaseService().getProfilePicture(user.uid),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.connectionState ==
+                                ConnectionState.waiting ||
+                            !snapshot.hasData) {
+                          return const CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.grey,
+                          );
+                        } else {
+                          return CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(snapshot.data!),
+                          );
+                        }
+                      },
+                    ),
                     title: Text('@${user.username}'),
                     subtitle: Text('${user.firstName} ${user.lastName}'),
                     onTap: () => Navigator.push(

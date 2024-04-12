@@ -132,11 +132,12 @@ class CompletedWorkoutCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(workout.description),
+            Text(workout.description,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text(
-              'Created by: ${workout.createdBy.firstName} ${workout.createdBy.lastName}',
-            ),
+            //Text(
+            //  'Created by: ${workout.createdBy.firstName} ${workout.createdBy.lastName}',
+            //),
           ],
         ),
       ),
