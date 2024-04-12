@@ -306,14 +306,14 @@ class DatabaseService {
           following.add(userIDOther);
           transaction.update(userFollowingRef, {'following': following});
           transaction.update(firestore.collection('users').doc(userIDCurrUser),
-              {'followingCount': FieldValue.increment(1)});
+              {'followingCount': following.length});
         }
       } else {
         transaction.set(userFollowingRef, {
           'following': [userIDOther],
         });
         transaction.update(firestore.collection('users').doc(userIDCurrUser),
-            {'followingCount': FieldValue.increment(1)});
+            {'followingCount': 1});
       }
     });
 
@@ -329,14 +329,14 @@ class DatabaseService {
           followers.add(userIDCurrUser);
           transaction.update(otherUserFollowersRef, {'followers': followers});
           transaction.update(firestore.collection('users').doc(userIDOther),
-              {'followerCount': FieldValue.increment(1)});
+              {'followerCount': followers.length});
         }
       } else {
         transaction.set(otherUserFollowersRef, {
           'followers': [userIDCurrUser],
         });
         transaction.update(firestore.collection('users').doc(userIDOther),
-            {'followerCount': FieldValue.increment(1)});
+            {'followerCount': 1});
       }
     });
   }
@@ -361,7 +361,7 @@ class DatabaseService {
           following.remove(userIDOther);
           transaction.update(userFollowingRef, {'following': following});
           transaction.update(firestore.collection('users').doc(userIDCurrUser),
-              {'followingCount': FieldValue.increment(-1)});
+              {'followingCount': following.length});
         }
       }
     });
@@ -378,7 +378,7 @@ class DatabaseService {
           followers.remove(userIDCurrUser);
           transaction.update(otherUserFollowersRef, {'followers': followers});
           transaction.update(firestore.collection('users').doc(userIDOther),
-              {'followerCount': FieldValue.increment(-1)});
+              {'followerCount': followers.length});
         }
       }
     });
