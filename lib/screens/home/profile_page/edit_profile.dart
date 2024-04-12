@@ -6,6 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:atlas/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:atlas/services/database.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -15,41 +16,51 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  File? _image;
+  File? _image; // ignore: unused_field
   final ImagePicker _picker = ImagePicker();
+  String? _profilePictureUrl; // ignore: unused_field
+  //NEED TO IGNORE UNUSED FIELD. Can't delete those fields.
 
-  // Function to pick an image
-  Future<void> _pickImage() async {
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfilePicture();
+  }
+
+  Future<void> _fetchProfilePicture() async {
+    final atlasUser = Provider.of<AtlasUser?>(context, listen: false);
+    final userId = atlasUser?.uid ?? '';
+    // Assuming you have a method in your database service to get the profile picture URL
+    final url = await DatabaseService().getProfilePicture(userId);
+    setState(() {
+      _profilePictureUrl = url;
+    });
+  }
+
+  Future<void> _pickAndUploadImage(String userId) async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
+      File image = File(pickedFile.path);
       setState(() {
-        _image = File(pickedFile.path);
+        _image = image;
       });
+      await _uploadImage(userId, image);
+      await _fetchProfilePicture(); // Refresh profile picture after uploading
     }
   }
 
-  // Function to upload an image to Firebase Storage
-  Future<void> _uploadImage(String userid) async {
-    if (_image == null) return;
-
-    String fileExtension = path.extension(_image!.path);
-    String fileName =
-        "$userid$fileExtension"; // Construct file name with new extension
+  Future<void> _uploadImage(String userId, File image) async {
+    String fileExtension = path.extension(image.path);
+    String fileName = "$userId$fileExtension";
     Reference storageRef =
         FirebaseStorage.instance.ref('profile_pictures/$fileName');
-
-    // Upload the new file
-    UploadTask uploadTask = storageRef.putFile(_image!);
-    await uploadTask.whenComplete(() {});
-
-    // No need to get the download URL if you're storing the filename in Firestore
-    // Instead, store the fileName (which includes the extension) in Firestore
+    await storageRef.putFile(image);
+    // Update Firestore with the new file name
     await FirebaseFirestore.instance
         .collection('profilePictureURLs')
-        .doc(userid)
+        .doc(userId)
         .set({
-      'url': fileName, // Store the fileName as the url
+      'url': fileName,
     });
   }
 
@@ -61,22 +72,51 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
+        centerTitle: true,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(
+            20.0), // Add padding around the content for better aesthetics
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment
+              .start, // Align the column to the start of the main axis (vertical)
           children: [
-            _image != null
-                ? Image.file(_image!)
-                : const Text('No image selected.'),
-            ElevatedButton(
-              onPressed: _pickImage,
-              child: const Text('Pick Image'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment
+                  .center, // Center the row content along the x-axis
+              children: [
+                FutureBuilder<String>(
+                  future: DatabaseService().getProfilePicture(userIdCurrUser),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    Widget imageWidget;
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        !snapshot.hasData) {
+                      imageWidget = const CircleAvatar(
+                        radius: 35,
+                        backgroundColor: Colors.grey, // Placeholder color
+                      );
+                    } else {
+                      imageWidget = CircleAvatar(
+                        radius: 35,
+                        backgroundImage: NetworkImage(snapshot.data!),
+                      );
+                    }
+                    return imageWidget;
+                  },
+                ),
+                const SizedBox(width: 20), // Spacing between picture and button
+                TextButton.icon(
+                  icon: const Icon(Icons.edit),
+                  label: const Text(
+                    'Edit Profile Picture',
+                    style: TextStyle(color: Color.fromARGB(255, 143, 197, 255)),
+                  ),
+                  onPressed: () => _pickAndUploadImage(userIdCurrUser),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () => _uploadImage(userIdCurrUser),
-              child: const Text('Upload Image'),
-            ),
+            // You can add more widgets below in this Column if needed
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:atlas/models/workout.dart';
 import 'package:atlas/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'detailed_workout_page.dart';
 
 /* A card widget that displays information about a completed workout. */
 class CompletedWorkoutCard extends StatelessWidget {
@@ -46,6 +47,14 @@ class CompletedWorkoutCard extends StatelessWidget {
       color:
           const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
       child: ListTile(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailedWorkoutPage(workout: workout),
+            ),
+          );
+        },
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,12 +75,12 @@ class CompletedWorkoutCard extends StatelessWidget {
                                 ConnectionState.waiting ||
                             !snapshot.hasData) {
                           imageWidget = const CircleAvatar(
-                            radius: 20,
+                            radius: 25,
                             backgroundColor: Colors.grey,
                           );
                         } else {
                           imageWidget = CircleAvatar(
-                            radius: 20,
+                            radius: 25,
                             backgroundImage: NetworkImage(snapshot.data!),
                           );
                         }

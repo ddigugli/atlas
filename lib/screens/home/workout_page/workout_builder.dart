@@ -34,7 +34,7 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
                     8), // Adjusts the button's vertical positioning and size
             decoration: BoxDecoration(
               color: const Color.fromARGB(
-                  255, 19, 69, 109), // Background color of the butt  on
+                  255, 101, 176, 255), // Background color of the butt  on
               borderRadius: BorderRadius.circular(
                   4), // Adjusts the roundness of button corners to make it rectangular
             ),

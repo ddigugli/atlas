@@ -26,18 +26,18 @@ class _SettingsPageState extends State<SettingsPage> {
           mainAxisAlignment: MainAxisAlignment
               .center, // Center the column in the middle of the screen
           children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(),
-              ),
+            TextButton.icon(
+              icon: const Icon(Icons.edit),
+              label: const Text('Edit Profile',
+                  style: TextStyle(color: Color.fromARGB(255, 143, 197, 255))),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const EditProfilePage()),
+                    builder: (context) => const EditProfilePage(),
+                  ),
                 );
               },
-              child: const Text('Edit Profile'),
             ),
             const SizedBox(height: 20), // Add some spacing before the button
             TextButton.icon(
@@ -49,6 +49,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 /* Pop all routes until reaching the root route so user is returned to sign in page when signing out */
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 229, 53,
+                    40), // This sets the color of the icon and text
+              ),
             ),
           ],
         ),

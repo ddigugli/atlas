@@ -84,7 +84,8 @@ class _ProfileViewState extends State<ProfileView> {
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.fromLTRB(20.0, 10.0, 10.0,
+                            10.0), // Added left padding of 20.0
                         child: FutureBuilder<String>(
                           future:
                               DatabaseService().getProfilePicture(userData.uid),
@@ -101,7 +102,7 @@ class _ProfileViewState extends State<ProfileView> {
                               );
                             } else {
                               imageWidget = CircleAvatar(
-                                radius: 40,
+                                radius: 35,
                                 backgroundImage: NetworkImage(snapshot.data!),
                               );
                             }
@@ -111,7 +112,8 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.only(
+                              top: 8.0, bottom: 8.0, left: 15.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
