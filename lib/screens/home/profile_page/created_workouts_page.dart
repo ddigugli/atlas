@@ -54,11 +54,74 @@ class _CreatedWorkoutsPageState extends State<CreatedWorkoutsPage> {
                           );
                         },
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete,
-                              color: Colors.red, // Trash icon in red color
-                              size: 18),
-                          onPressed: () {
-                            // Assuming DatabaseService.deleteWorkout() is a static method and requires the workout ID or object
+                          icon: const Icon(Icons.delete_forever_outlined),
+                          onPressed: () async {
+                            // Show a confirmation dialog
+                            final bool confirmDelete = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 173, 173, 173),
+                                      title: const Text('Confirm'),
+                                      content: const Text(
+                                          'Are you sure you want to delete this workout?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: const Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255,
+                                                  255,
+                                                  255,
+                                                  255), // Set the text color for 'Cancel' button
+                                              fontWeight: FontWeight
+                                                  .bold, // Make the text bold
+                                            ),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: const Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255,
+                                                  255,
+                                                  17,
+                                                  0), // Set the text color for 'Delete' button
+                                              fontWeight: FontWeight
+                                                  .bold, // Make the text bold
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ) ??
+                                false; // If showDialog was dismissed by tapping outside of the alert, it returns null
+
+                            // If the user confirmed, then delete
+                            if (confirmDelete) {
+                              final bool didDelete =
+                                  await DatabaseService().deleteWorkout(
+                                workouts[index].workoutID,
+                                widget.user.uid,
+                              );
+
+                              // If the delete operation is successful, update the state to remove the item from the list.
+                              if (didDelete) {
+                                setState(() {
+                                  workouts.removeAt(index);
+                                });
+                              } else {
+                                // If delete was not successful, you can show an error message or handle it accordingly.
+                              }
+                            }
                           },
                         ),
                       ),

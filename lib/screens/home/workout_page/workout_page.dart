@@ -38,6 +38,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   );
                 },
               ),
+
+              //Need to add workout cards here.
             ),
           ],
         ),

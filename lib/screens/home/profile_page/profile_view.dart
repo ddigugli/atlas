@@ -5,6 +5,7 @@ import 'package:atlas/services/database.dart';
 import 'package:atlas/screens/home/profile_page/settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:atlas/models/user.dart';
+import 'dart:ui';
 
 class ProfileView extends StatefulWidget {
   final String userID;
@@ -84,8 +85,8 @@ class _ProfileViewState extends State<ProfileView> {
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20.0, 10.0, 10.0,
-                            10.0), // Added left padding of 20.0
+                        padding:
+                            const EdgeInsets.fromLTRB(20.0, 10.0, 10.0, 10.0),
                         child: FutureBuilder<String>(
                           future:
                               DatabaseService().getProfilePicture(userData.uid),
@@ -101,9 +102,43 @@ class _ProfileViewState extends State<ProfileView> {
                                     Colors.grey, // Placeholder color
                               );
                             } else {
-                              imageWidget = CircleAvatar(
-                                radius: 35,
-                                backgroundImage: NetworkImage(snapshot.data!),
+                              imageWidget = GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        backgroundColor: Colors.transparent,
+                                        child: Stack(
+                                          children: [
+                                            BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 5, sigmaY: 5),
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                color: Colors.transparent,
+                                                width: double.infinity,
+                                                height: double.infinity,
+                                              ),
+                                            ),
+                                            Center(
+                                              child: CircleAvatar(
+                                                radius:
+                                                    90, // Larger radius for the expanded view
+                                                backgroundImage: NetworkImage(
+                                                    snapshot.data!),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  radius: 35,
+                                  backgroundImage: NetworkImage(snapshot.data!),
+                                ),
                               );
                             }
                             return imageWidget;

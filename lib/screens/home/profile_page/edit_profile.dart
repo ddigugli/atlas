@@ -16,44 +16,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
   }
 
-  /*Future<void> _fetchProfilePicture() async {
-    final atlasUser = Provider.of<AtlasUser?>(context, listen: false);
-    final userId = atlasUser?.uid ?? '';
-    // Assuming you have a method in your database service to get the profile picture URL
-    final url = await DatabaseService().getProfilePicture(userId);
-    setState(() {
-      _profilePictureUrl = url;
-    });
-  }
-
-  Future<void> _pickAndUploadImage(String userId) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      File image = File(pickedFile.path);
-      setState(() {
-        _image = image;
-      });
-      await _uploadImage(userId, image);
-      await _fetchProfilePicture(); // Refresh profile picture after uploading
-    }
-  }
-
-  Future<void> _uploadImage(String userId, File image) async {
-    String fileExtension = path.extension(image.path);
-    String fileName = "$userId$fileExtension";
-    Reference storageRef =
-        FirebaseStorage.instance.ref('profilepictures/$fileName');
-    await storageRef.putFile(image);
-    // Update Firestore with the new file name
-    await FirebaseFirestore.instance
-        .collection('profilePictureURLs')
-        .doc(userId)
-        .set({
-      'url': fileName,
-    });
-  }
-  */
-
   @override
   Widget build(BuildContext context) {
     final atlasUser = Provider.of<AtlasUser?>(context, listen: false);
