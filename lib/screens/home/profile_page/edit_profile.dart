@@ -53,7 +53,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     String fileExtension = path.extension(image.path);
     String fileName = "$userId$fileExtension";
     Reference storageRef =
-        FirebaseStorage.instance.ref('profile_pictures/$fileName');
+        FirebaseStorage.instance.ref('profilepictures/$fileName');
     await storageRef.putFile(image);
     // Update Firestore with the new file name
     await FirebaseFirestore.instance

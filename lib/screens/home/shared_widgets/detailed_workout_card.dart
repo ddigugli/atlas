@@ -12,6 +12,8 @@ class DetailedWorkoutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color:
+          const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
       margin: const EdgeInsets.all(8.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),

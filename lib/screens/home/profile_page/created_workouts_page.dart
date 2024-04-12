@@ -39,19 +39,30 @@ class _CreatedWorkoutsPageState extends State<CreatedWorkoutsPage> {
                   itemCount: workouts.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
-                        child: ListTile(
-                      title: Text(workouts[index].workoutName),
-                      subtitle: Text(workouts[index].description),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                DetailedWorkoutPage(workout: workouts[index]),
-                          ),
-                        );
-                      },
-                    ));
+                      color: const Color.fromARGB(
+                          255, 35, 35, 35), // Background color
+                      child: ListTile(
+                        title: Text(workouts[index].workoutName),
+                        subtitle: Text(workouts[index].description),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailedWorkoutPage(workout: workouts[index]),
+                            ),
+                          );
+                        },
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete,
+                              color: Colors.red, // Trash icon in red color
+                              size: 18),
+                          onPressed: () {
+                            // Assuming DatabaseService.deleteWorkout() is a static method and requires the workout ID or object
+                          },
+                        ),
+                      ),
+                    );
                   });
             } else {
               return const Center(child: Text('No Workouts found'));

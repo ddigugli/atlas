@@ -46,6 +46,9 @@ class _FollowersPageState extends State<FollowersPage> {
               itemBuilder: (context, index) {
                 var user = snapshot.data![index];
                 return Card(
+                  color: const Color.fromARGB(
+                      255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
+
                   child: ListTile(
                     leading: FutureBuilder<String>(
                       future: DatabaseService().getProfilePicture(user.uid),
