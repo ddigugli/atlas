@@ -426,6 +426,30 @@ class DatabaseService {
     return users;
   }
 
+  Future<bool> deleteWorkout(String workoutId, String userId) async {
+    try {
+      // Delete the workout document from the "createdWorkouts" collection
+      DocumentReference userDocRef =
+          firestore.collection('workoutsByUser').doc(userId);
+      var userWorkoutsDoc = await userDocRef.get();
+      List workouts = userWorkoutsDoc.get('workoutIDs');
+
+      // Remove the workoutId from the array field in the document
+      await userDocRef.update({
+        "workoutIDs": FieldValue.arrayRemove([workoutId])
+      });
+
+      //Update User Object
+      await firestore.collection('users').doc(userId).update({
+        'workoutCount': workouts.length - 1,
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /* FIREBASE STORAGE FUNCTIONS */
 
   /* Function to fetch profile picture */
@@ -463,7 +487,7 @@ class DatabaseService {
     return url;
   }
 
-  Future<void> pickAndUploadImage(String userId, String bucket) async {
+  Future<void> pickAndUploadImage(String userId, String storageBucket) async {
     final ImagePicker picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -472,15 +496,17 @@ class DatabaseService {
       //setState(() {
       // _image = image;
       //});
-      await uploadImage(userId, image, bucket);
+      await uploadImage(userId, image, storageBucket);
       //   await _fetchProfilePicture(); // Refresh profile picture after uploading
     }
   }
 
-  Future<void> uploadImage(String userId, File image, String bucket) async {
+  Future<void> uploadImage(
+      String userId, File image, String storageBucket) async {
     String fileExtension = path.extension(image.path);
     String fileName = "$userId$fileExtension";
-    Reference storageRef = FirebaseStorage.instance.ref('$bucket/$fileName');
+    Reference storageRef =
+        FirebaseStorage.instance.ref('$storageBucket/$fileName');
     await storageRef.putFile(image);
     // Update Firestore with the new file name
     await FirebaseFirestore.instance
