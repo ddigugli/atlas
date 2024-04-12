@@ -205,15 +205,18 @@ class DatabaseService {
         'workoutIDs': [workout.workoutID],
       });
       await firestore.collection('users').doc(workout.createdBy.uid).update({
-        'workoutCount': FieldValue.increment(1),
+        'workoutCount': 1,
       });
     } else {
+      // If the document exists, get the current workoutIDs list
+      List workouts = userWorkoutsDoc.get('workoutIDs');
+
       // If the document exists, update it with the new workout ID
       await userWorkoutsRef.update({
         'workoutIDs': FieldValue.arrayUnion([workout.workoutID]),
       });
       await firestore.collection('users').doc(workout.createdBy.uid).update({
-        'workoutCount': FieldValue.increment(1),
+        'workoutCount': workouts.length + 1,
       });
     }
   }
