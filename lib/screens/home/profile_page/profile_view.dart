@@ -1,11 +1,13 @@
 import 'package:atlas/screens/home/shared_widgets/count_button.dart';
 import 'package:atlas/screens/home/shared_widgets/following_unfollowing_button.dart';
-import 'package:flutter/material.dart';
-import 'package:atlas/services/database.dart';
 import 'package:atlas/screens/home/profile_page/settings_page.dart';
+import 'package:atlas/screens/home/shared_widgets/profile_card.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:atlas/models/user.dart';
 import 'dart:ui';
+import 'package:atlas/models/workout.dart';
+import 'package:atlas/services/database.dart';
 
 class ProfileView extends StatefulWidget {
   final String userID;
@@ -31,6 +33,21 @@ class _ProfileViewState extends State<ProfileView> {
     });
   }
 
+  final db = DatabaseService();
+
+  Future<List<CompletedWorkout>> _getUserWorkouts(String userID) async {
+    List<CompletedWorkout> completedWorkouts = [];
+
+    List<CompletedWorkout> workouts =
+        await db.getCompletedWorkoutsByUser(userID);
+
+    completedWorkouts.addAll(workouts);
+
+    completedWorkouts.sort((a, b) => b.completedTime.compareTo(a.completedTime));
+
+    return completedWorkouts;
+  }
+
   @override
   Widget build(BuildContext context) {
     final atlasUser = Provider.of<AtlasUser?>(context, listen: false);
@@ -47,7 +64,8 @@ class _ProfileViewState extends State<ProfileView> {
         } else if (snapshot.hasError || !snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(title: const Text('Error')),
-            body: const Center(child: Text('User not found or error occurred')),
+            body: const Center(
+                child: Text('User not found or error occurred')),
           );
         }
 
@@ -88,8 +106,8 @@ class _ProfileViewState extends State<ProfileView> {
                         padding:
                             const EdgeInsets.fromLTRB(20.0, 10.0, 10.0, 10.0),
                         child: FutureBuilder<String>(
-                          future:
-                              DatabaseService().getProfilePicture(userData.uid),
+                          future: DatabaseService()
+                              .getProfilePicture(userData.uid),
                           builder: (BuildContext context,
                               AsyncSnapshot<String> snapshot) {
                             Widget imageWidget;
@@ -98,8 +116,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 !snapshot.hasData) {
                               imageWidget = const CircleAvatar(
                                 radius: 35,
-                                backgroundColor:
-                                    Colors.grey, // Placeholder color
+                                backgroundColor: Colors.grey,
                               );
                             } else {
                               imageWidget = GestureDetector(
@@ -188,23 +205,50 @@ class _ProfileViewState extends State<ProfileView> {
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child:
-                              CountButton(user: userData, label: 'Followers'),
+                          child: CountButton(
+                              user: userData, label: 'Followers'),
                         ),
                       ),
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child:
-                              CountButton(user: userData, label: 'Following'),
+                          child: CountButton(
+                              user: userData, label: 'Following'),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 15.0),
                   const Divider(color: Colors.black, thickness: 2),
-                  const SizedBox(height: 15.0),
-                  // Add more widgets if needed
+                  const SizedBox(height: 10.0), // Added SizedBox for spacing
+                  // Add the FutureBuilder for displaying user workouts
+                  FutureBuilder<List<CompletedWorkout>>(
+                    future: _getUserWorkouts(userIdCurrUser),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(
+                            child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                            child: Text('Error: ${snapshot.error}'));
+                      } else if (snapshot.hasData) {
+                        List<CompletedWorkout> workouts =
+                            snapshot.data ?? [];
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: workouts.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ProfileCard(
+                                workout: workouts[index]);
+                          },
+                        );
+                      } else {
+                        return const Center(child: Text('No Workouts found'));
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
