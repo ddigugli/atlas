@@ -226,6 +226,31 @@ class DatabaseService {
     }
   }
 
+  Future<void> updateCreatedWorkout(Workout workout) async {
+    /* Add the workout to the workouts collection with the specified workoutID */
+    DocumentReference workoutRef =
+        firestore.collection("workouts").doc(workout.workoutID);
+    await workoutRef.set({
+      'createdBy': workout.createdBy.uid,
+      'workoutID': workout.workoutID,
+      'workoutName': workout.workoutName,
+      'description': workout.description,
+      'exercises': workout.exercises
+          .map((exercise) => {
+                'exerciseName': exercise.name,
+                'sets': exercise.sets,
+                'reps': exercise.reps,
+                'weight': exercise.weight,
+                'description': exercise.description,
+                'equipment': exercise.equipment,
+                'targetMuscle': exercise.targetMuscle,
+              })
+          .toList(),
+    });
+
+    // Update the workoutsByUser collection
+  }
+
   /* function that takes in a workout object and a userid of the user that finished the workout and saves the workout to the database */
   Future<void> saveCompletedWorkout(
       Workout workout, String completedUserId) async {
