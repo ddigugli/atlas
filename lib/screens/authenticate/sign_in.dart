@@ -43,18 +43,24 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ATLAS'),
-        centerTitle: true,
-      ),
       body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg.jpg'),
+            alignment: Alignment(0, 0.5),
+            fit: BoxFit.cover,
+          ),
+        ),
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'Welcome!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'ATLAS',
+              style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.w900,
+              ),
             ),
             const SizedBox(height: 20),
             TextField(
@@ -63,6 +69,8 @@ class _SignInState extends State<SignIn> {
                 labelText: 'Username or Email',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
+                filled: true,
+                fillColor: Color.fromRGBO(255, 255, 255, 0.1),
               ),
             ),
             const SizedBox(height: 10),
@@ -73,6 +81,8 @@ class _SignInState extends State<SignIn> {
                 labelText: 'Password',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
+                filled: true,
+                fillColor: Color.fromRGBO(255, 255, 255, 0.1),
               ),
             ),
             if (_errorMessage
@@ -85,10 +95,32 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed:
-                  _signIn, // when pressed sign in the user with the givne email and password
-              child: const Text('Sign In'),
+            Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width *
+                    0.9, // Set width to 75% of the screen width
+                child: ElevatedButton(
+                  onPressed:
+                      _signIn, // when pressed sign in the user with the given email and password
+                  style: ElevatedButton.styleFrom(
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      color: Color.fromRGBO(255, 255, 255, 1),
+                      fontWeight: FontWeight.w900,
+                    ),
+                    backgroundColor:
+                        const Color.fromRGBO(33, 150, 243, 0.3), //Colors.white
+                    //  .withOpacity(0.1), // Slightly transparent background
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(5.0), // Rounded corners
+                      // White border
+                    ),
+                  ),
+                  child: const Text('Sign In'),
+                ),
+              ),
             ),
             const Padding(
               padding: EdgeInsets.only(top: 20.0),
@@ -105,7 +137,8 @@ class _SignInState extends State<SignIn> {
                   children: <TextSpan>[
                     TextSpan(
                       text: 'Register Now',
-                      style: TextStyle(color: Colors.blue),
+                      style: TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

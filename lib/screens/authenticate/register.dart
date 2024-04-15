@@ -31,22 +31,27 @@ class _RegisterState extends State<Register> {
             ),
           )
         : Scaffold(
-            appBar: AppBar(
-              title: const Text('ATLAS'), // Set the app bar title
-              centerTitle: true,
-            ),
             body: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/bg.jpg'),
+                  alignment: Alignment(0, 0.5),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              padding: const EdgeInsets.all(20),
               child: Form(
                 key: _formKey, // Assign the form key
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.2),
                       const Text(
                         'Create Account', // Display the heading
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
+                            fontSize: 30, fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
@@ -55,6 +60,8 @@ class _RegisterState extends State<Register> {
                           labelText: 'Email', // Display the email label
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.mail),
+                          filled: true,
+                          fillColor: Color.fromRGBO(255, 255, 255, 0.1),
                         ),
                         validator: (val) => val!.isEmpty
                             ? 'Enter an email'
@@ -69,6 +76,8 @@ class _RegisterState extends State<Register> {
                           labelText: 'Username', // Display the username label
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person),
+                          filled: true,
+                          fillColor: Color.fromRGBO(255, 255, 255, 0.1),
                         ),
                         validator: (val) => val!.isEmpty
                             ? 'Enter a username'
@@ -83,6 +92,8 @@ class _RegisterState extends State<Register> {
                           labelText: 'Full Name', // Display the full name label
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person),
+                          filled: true,
+                          fillColor: Color.fromRGBO(255, 255, 255, 0.1),
                         ),
                         validator: (val) => val!.isEmpty
                             ? 'Enter your full name'
@@ -97,6 +108,8 @@ class _RegisterState extends State<Register> {
                           labelText: 'Password', // Display the password label
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.lock),
+                          filled: true,
+                          fillColor: Color.fromRGBO(255, 255, 255, 0.1),
                         ),
                         obscureText: true,
                         validator: (val) => val!.length < 6
@@ -106,28 +119,51 @@ class _RegisterState extends State<Register> {
                             () => _password = val), // Update _password variable
                       ),
                       const SizedBox(height: 20.0),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(
-                                () => _loading = true); // Set _loading to true
-                            dynamic result =
-                                await _auth.registerWithEmailAndPassword(
-                                    _email,
-                                    _password,
-                                    _username,
-                                    _fullName); // Call the registerWithEmailAndPassword method
-                            if (result == null) {
-                              setState(() {
-                                _error =
-                                    'Email or username already taken'; // Set _error message
-                                _loading = false; // Set _loading to false
-                              });
-                            }
-                          }
-                        },
-                        child: const Text(
-                            'Register'), // Display the register button
+                      Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width *
+                              0.9, // Set width to 75% of the screen width
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() =>
+                                    _loading = true); // Set _loading to true
+                                dynamic result =
+                                    await _auth.registerWithEmailAndPassword(
+                                        _email,
+                                        _password,
+                                        _username,
+                                        _fullName); // Call the registerWithEmailAndPassword method
+                                if (result == null) {
+                                  setState(() {
+                                    _error =
+                                        'Email or username already taken'; // Set _error message
+                                    _loading = false; // Set _loading to false
+                                  });
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              textStyle: const TextStyle(
+                                fontSize: 16,
+                                color: Color.fromRGBO(255, 255, 255, 1),
+                                fontWeight: FontWeight.w900,
+                              ),
+                              backgroundColor: const Color.fromRGBO(
+                                  33, 150, 243, 0.3), //Colors.white
+                              //  .withOpacity(0.1), // Slightly transparent background
+
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    5.0), // Rounded corners
+                                // White border
+                              ),
+                            ),
+
+                            child: const Text(
+                                'Register'), // Display the register button
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 12.0),
                       Text(
@@ -150,7 +186,9 @@ class _RegisterState extends State<Register> {
                             children: <TextSpan>[
                               TextSpan(
                                   text: 'Sign in', // Display the "Sign in" text
-                                  style: TextStyle(color: Colors.blue)),
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ),
