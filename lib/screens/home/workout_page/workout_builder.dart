@@ -1,23 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:atlas/models/exercise.dart'; // Ensure this path is correct
-import 'package:atlas/screens/home/workout_page/exercise_selection_page.dart'; // Verify the path
-import 'package:atlas/services/database.dart'; // Verify the path
+import 'package:atlas/models/exercise.dart';
+import 'package:atlas/screens/home/workout_page/exercise_selection_page.dart';
+import 'package:atlas/services/database.dart';
 import 'package:atlas/models/user.dart';
 import 'package:atlas/models/workout.dart';
 import 'package:provider/provider.dart';
 
 class WorkoutBuilder extends StatefulWidget {
-  const WorkoutBuilder({super.key});
+  final Workout? initialWorkout; // Optional initial workout
+
+  const WorkoutBuilder({super.key, this.initialWorkout});
 
   @override
   State<WorkoutBuilder> createState() => _WorkoutBuilderState();
 }
 
 class _WorkoutBuilderState extends State<WorkoutBuilder> {
-  String workoutName = '';
-  String workoutDescription = '';
+  late TextEditingController workoutNameController;
+  late TextEditingController workoutDescriptionController;
   List<Exercise> selectedExercises = [];
-  final db = DatabaseService();
+  Map<String, int> exerciseNameToIndex =
+      {}; // Map to keep track of exercises by name
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialWorkout != null) {
+      workoutNameController =
+          TextEditingController(text: widget.initialWorkout!.workoutName);
+      workoutDescriptionController =
+          TextEditingController(text: widget.initialWorkout!.description);
+      selectedExercises = List.from(widget.initialWorkout!.exercises);
+      _updateExerciseMap();
+    } else {
+      workoutNameController = TextEditingController(text: '');
+      workoutDescriptionController = TextEditingController(text: '');
+    }
+  }
+
+  @override
+  void dispose() {
+    workoutNameController.dispose();
+    workoutDescriptionController.dispose();
+    super.dispose();
+  }
+
+  void _updateExerciseMap() {
+    exerciseNameToIndex.clear();
+    for (int i = 0; i < selectedExercises.length; i++) {
+      exerciseNameToIndex[selectedExercises[i].name] = i;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +74,20 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
             child: TextButton(
               onPressed: () async {
                 if (atlasUser != null) {
+                  String workoutID;
                   /* create new workout ID */
-                  String workoutID = DatabaseService().createDocID("workouts");
+                  if (widget.initialWorkout != null) {
+                    // If editing an existing workout, use the existing ID
+                    workoutID = widget.initialWorkout!.workoutID;
+                  } else {
+                    workoutID = DatabaseService().createDocID("workouts");
+                  }
 
                   /* create a new workout object */
                   Workout newWorkout = Workout(
                     createdBy: atlasUser,
-                    workoutName: workoutName,
-                    description: workoutDescription,
+                    workoutName: workoutNameController.text,
+                    description: workoutDescriptionController.text,
                     exercises: selectedExercises,
                     workoutID: workoutID,
                   );
@@ -60,7 +99,11 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
                   Navigator.pop(context);
 
                   // Call the saveWorkout method with the new Workout object
-                  await DatabaseService().saveCreatedWorkout(newWorkout);
+                  if (widget.initialWorkout == null) {
+                    await DatabaseService().saveCreatedWorkout(newWorkout);
+                  } else {
+                    await DatabaseService().updateCreatedWorkout(newWorkout);
+                  }
                 } else {
                   // Handle the case where there is no logged-in user
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -85,19 +128,21 @@ class _WorkoutBuilderState extends State<WorkoutBuilder> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
+                controller: workoutNameController,
                 decoration: const InputDecoration(
                   labelText: 'Workout Name',
                   border: OutlineInputBorder(),
                 ),
-                onChanged: (value) => workoutName = value,
+                onChanged: (value) => workoutNameController.text = value,
               ),
               const SizedBox(height: 10),
               TextField(
+                controller: workoutDescriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Workout Description',
                   border: OutlineInputBorder(),
                 ),
-                onChanged: (value) => workoutDescription = value,
+                onChanged: (value) => workoutDescriptionController.text = value,
               ),
               const SizedBox(height: 20),
               ...selectedExercises.asMap().entries.map((entry) {
@@ -276,6 +321,7 @@ class ExerciseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: const Color.fromARGB(255, 35, 35, 35),
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: Padding(
         padding: const EdgeInsets.all(8.0),

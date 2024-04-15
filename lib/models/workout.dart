@@ -15,7 +15,7 @@ class Workout {
     required this.createdBy,
     required this.workoutName,
     required this.workoutID,
-    this.description = "",
+    required this.description,
     required this.exercises,
   });
 }
@@ -29,7 +29,7 @@ class CompletedWorkout extends Workout {
   CompletedWorkout({
     required super.createdBy,
     required super.workoutName,
-    super.description,
+    required super.description,
     required super.exercises,
     required this.completedTime,
     required this.completedBy,
