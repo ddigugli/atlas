@@ -3,6 +3,7 @@ import 'package:atlas/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:atlas/models/workout.dart';
 import 'package:atlas/screens/home/shared_widgets/detailed_workout_page.dart';
+import 'package:provider/provider.dart';
 
 class CreatedWorkoutsPage extends StatefulWidget {
   final AtlasUser user;
@@ -16,6 +17,9 @@ class CreatedWorkoutsPage extends StatefulWidget {
 class _CreatedWorkoutsPageState extends State<CreatedWorkoutsPage> {
   @override
   Widget build(BuildContext context) {
+    final atlasUser = Provider.of<AtlasUser?>(context, listen: false);
+    final userIdCurrUser = atlasUser?.uid ?? '';
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true, // Horizontally center the title
@@ -53,77 +57,82 @@ class _CreatedWorkoutsPageState extends State<CreatedWorkoutsPage> {
                             ),
                           );
                         },
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete_forever_outlined),
-                          onPressed: () async {
-                            // Show a confirmation dialog
-                            final bool confirmDelete = await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      backgroundColor: const Color.fromARGB(
-                                          255, 173, 173, 173),
-                                      title: const Text('Confirm'),
-                                      content: const Text(
-                                          'Are you sure you want to delete this workout?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(false),
-                                          child: const Text(
-                                            'Cancel',
-                                            style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255,
-                                                  255,
-                                                  255,
-                                                  255), // Set the text color for 'Cancel' button
-                                              fontWeight: FontWeight
-                                                  .bold, // Make the text bold
-                                            ),
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(true),
-                                          child: const Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255,
-                                                  255,
-                                                  17,
-                                                  0), // Set the text color for 'Delete' button
-                                              fontWeight: FontWeight
-                                                  .bold, // Make the text bold
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                        trailing: widget.user.uid == userIdCurrUser
+                            ? IconButton(
+                                icon: const Icon(Icons.delete_forever_outlined),
+                                onPressed: () async {
+                                  // Show a confirmation dialog
+                                  final bool confirmDelete = await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 173, 173, 173),
+                                            title: const Text('Confirm'),
+                                            content: const Text(
+                                                'Are you sure you want to delete this workout?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context)
+                                                        .pop(false),
+                                                child: const Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255,
+                                                        255,
+                                                        255,
+                                                        255), // Set the text color for 'Cancel' button
+                                                    fontWeight: FontWeight
+                                                        .bold, // Make the text bold
+                                                  ),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context)
+                                                        .pop(true),
+                                                child: const Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255,
+                                                        255,
+                                                        17,
+                                                        0), // Set the text color for 'Delete' button
+                                                    fontWeight: FontWeight
+                                                        .bold, // Make the text bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ) ??
+                                      false; // If showDialog was dismissed by tapping outside of the alert, it returns null
+
+                                  // If the user confirmed, then delete
+                                  if (confirmDelete) {
+                                    final bool didDelete =
+                                        await DatabaseService().deleteWorkout(
+                                      workouts[index].workoutID,
+                                      widget.user.uid,
                                     );
-                                  },
-                                ) ??
-                                false; // If showDialog was dismissed by tapping outside of the alert, it returns null
 
-                            // If the user confirmed, then delete
-                            if (confirmDelete) {
-                              final bool didDelete =
-                                  await DatabaseService().deleteWorkout(
-                                workouts[index].workoutID,
-                                widget.user.uid,
-                              );
-
-                              // If the delete operation is successful, update the state to remove the item from the list.
-                              if (didDelete) {
-                                setState(() {
-                                  workouts.removeAt(index);
-                                });
-                              } else {
-                                // If delete was not successful, you can show an error message or handle it accordingly.
-                              }
-                            }
-                          },
-                        ),
+                                    // If the delete operation is successful, update the state to remove the item from the list.
+                                    if (didDelete) {
+                                      setState(() {
+                                        workouts.removeAt(index);
+                                      });
+                                    } else {
+                                      // If delete was not successful, you can show an error message or handle it accordingly.
+                                    }
+                                  }
+                                },
+                              )
+                            : null,
                       ),
                     );
                   });

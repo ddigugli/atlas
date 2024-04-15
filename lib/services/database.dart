@@ -165,6 +165,7 @@ class DatabaseService {
         /* Pair workout with timestamp */
         completedWorkouts.add(CompletedWorkout(
           createdBy: workout.createdBy,
+          description: workout.description,
           workoutName: workout.workoutName,
           exercises: workout.exercises,
           completedTime: timestamp,

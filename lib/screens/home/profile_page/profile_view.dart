@@ -43,7 +43,8 @@ class _ProfileViewState extends State<ProfileView> {
 
     completedWorkouts.addAll(workouts);
 
-    completedWorkouts.sort((a, b) => b.completedTime.compareTo(a.completedTime));
+    completedWorkouts
+        .sort((a, b) => b.completedTime.compareTo(a.completedTime));
 
     return completedWorkouts;
   }
@@ -64,8 +65,7 @@ class _ProfileViewState extends State<ProfileView> {
         } else if (snapshot.hasError || !snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(title: const Text('Error')),
-            body: const Center(
-                child: Text('User not found or error occurred')),
+            body: const Center(child: Text('User not found or error occurred')),
           );
         }
 
@@ -106,8 +106,8 @@ class _ProfileViewState extends State<ProfileView> {
                         padding:
                             const EdgeInsets.fromLTRB(20.0, 10.0, 10.0, 10.0),
                         child: FutureBuilder<String>(
-                          future: DatabaseService()
-                              .getProfilePicture(userData.uid),
+                          future:
+                              DatabaseService().getProfilePicture(userData.uid),
                           builder: (BuildContext context,
                               AsyncSnapshot<String> snapshot) {
                             Widget imageWidget;
@@ -205,15 +205,15 @@ class _ProfileViewState extends State<ProfileView> {
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: CountButton(
-                              user: userData, label: 'Followers'),
+                          child:
+                              CountButton(user: userData, label: 'Followers'),
                         ),
                       ),
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: CountButton(
-                              user: userData, label: 'Following'),
+                          child:
+                              CountButton(user: userData, label: 'Following'),
                         ),
                       ),
                     ],
@@ -223,25 +223,20 @@ class _ProfileViewState extends State<ProfileView> {
                   const SizedBox(height: 10.0), // Added SizedBox for spacing
                   // Add the FutureBuilder for displaying user workouts
                   FutureBuilder<List<CompletedWorkout>>(
-                    future: _getUserWorkouts(userIdCurrUser),
+                    future: _getUserWorkouts(userData.uid),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                            child: CircularProgressIndicator());
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
-                        return Center(
-                            child: Text('Error: ${snapshot.error}'));
+                        return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
-                        List<CompletedWorkout> workouts =
-                            snapshot.data ?? [];
+                        List<CompletedWorkout> workouts = snapshot.data ?? [];
                         return ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: workouts.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return ProfileCard(
-                                workout: workouts[index]);
+                            return ProfileCard(workout: workouts[index]);
                           },
                         );
                       } else {

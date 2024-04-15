@@ -43,7 +43,8 @@ class ProfileCard extends StatelessWidget {
     }
 
     return Card(
-      color: const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
+      color:
+          const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
       child: ListTile(
         onTap: () {
           Navigator.push(
@@ -63,7 +64,7 @@ class ProfileCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               workout.workoutName,
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -73,7 +74,7 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     workout.description,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 14),
                   ),
                   //Text(
                   //  'Created by: ${workout.createdBy.firstName} ${workout.createdBy.lastName}',

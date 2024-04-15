@@ -132,7 +132,7 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                                 exercises[index]
                                     .name, // Use index instead of currentIndex
                                 style: const TextStyle(
-                                    fontSize: 36, fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                                 textAlign: TextAlign
                                     .center, // Center text horizontally
                               ),
@@ -145,13 +145,13 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                               children: [
                                 const SizedBox(width: 32),
                                 const Icon(Icons.format_list_numbered,
-                                    size: 36),
+                                    size: 20),
                                 const SizedBox(
                                     width:
                                         8), // Add some space between icon and text
                                 Text(
                                   ' ${exercises[index].sets} sets', // Use index to avoid issues during swiping
-                                  style: const TextStyle(fontSize: 36),
+                                  style: const TextStyle(fontSize: 20),
                                 ),
                               ],
                             ),
@@ -159,11 +159,11 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                             Row(
                               children: [
                                 const SizedBox(width: 32),
-                                const Icon(Icons.repeat, size: 36),
+                                const Icon(Icons.repeat, size: 20),
                                 const SizedBox(width: 8),
                                 Text(
                                   ' ${exercises[index].reps} reps',
-                                  style: const TextStyle(fontSize: 36),
+                                  style: const TextStyle(fontSize: 20),
                                 ),
                               ],
                             ),
@@ -171,7 +171,7 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                             Row(
                               children: [
                                 const SizedBox(width: 32),
-                                const Icon(Icons.fitness_center, size: 36),
+                                const Icon(Icons.fitness_center, size: 20),
                                 const SizedBox(width: 8),
                                 Text(
                                   // Add an if statement that checks if the weight has the word "body" in it. If it does, do not display "lbs" after the weight
@@ -179,7 +179,7 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
                                           'b') // Check if the weight contains 'b' (for body weight)
                                       ? ' ${exercises[index].weight}'
                                       : ' ${exercises[index].weight} lbs',
-                                  style: const TextStyle(fontSize: 36),
+                                  style: const TextStyle(fontSize: 20),
                                 ),
                               ],
                             ),
