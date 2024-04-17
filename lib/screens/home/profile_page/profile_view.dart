@@ -20,11 +20,13 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   late Future<AtlasUser> _userDataFuture;
+  late Future<List<CompletedWorkout>> _userWorkoutFuture;
 
   @override
   void initState() {
     super.initState();
     _userDataFuture = DatabaseService().getAtlasUser(widget.userID);
+    _userWorkoutFuture = _getUserWorkouts(widget.userID);
   }
 
   Future<void> _refreshData() async {
@@ -223,7 +225,7 @@ class _ProfileViewState extends State<ProfileView> {
                   const SizedBox(height: 10.0), // Added SizedBox for spacing
                   // Add the FutureBuilder for displaying user workouts
                   FutureBuilder<List<CompletedWorkout>>(
-                    future: _getUserWorkouts(userData.uid),
+                    future: _userWorkoutFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());

@@ -30,16 +30,15 @@ class _MyHomePageState extends State<MyHomePage> {
     final userID = atlasUser?.uid ?? '';
 
     /* create a list of widgets to display on the home page */
-    final List<Widget> children = [
-      const ActivityDashboard(),
-      const SearchPage(),
-      const WorkoutPage(),
-      ProfileView(userID: userID),
-    ];
 
     /* return the scaffold with the bottom navigation bar */
     return Scaffold(
-      body: Center(child: children[_currentIndex]),
+      body: IndexedStack(index: _currentIndex, children: <Widget>[
+        const ActivityDashboard(),
+        const SearchPage(),
+        const WorkoutPage(),
+        ProfileView(userID: userID),
+      ]),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 22, 22, 22),
         onTap: onTabTapped,
