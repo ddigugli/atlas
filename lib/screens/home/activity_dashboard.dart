@@ -64,25 +64,30 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
         ),
       ),
       /* display a list of completed workouts */
-      body: FutureBuilder<List<CompletedWorkout>>(
-        future: _getActivityDashboardWorkouts(userId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            List<CompletedWorkout> workouts = snapshot.data ?? [];
-            return ListView.builder(
-              itemCount: workouts.length,
-              itemBuilder: (BuildContext context, int index) {
-                return CompletedWorkoutCard(workout: workouts[index]);
-              },
-            );
-          } else {
-            return const Center(child: Text('No Workouts found'));
-          }
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {}); // Refresh the widget
         },
+        child: FutureBuilder<List<CompletedWorkout>>(
+          future: _getActivityDashboardWorkouts(userId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasData) {
+              List<CompletedWorkout> workouts = snapshot.data ?? [];
+              return ListView.builder(
+                itemCount: workouts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return CompletedWorkoutCard(workout: workouts[index]);
+                },
+              );
+            } else {
+              return const Center(child: Text('No Workouts found'));
+            }
+          },
+        ),
       ),
     );
   }
