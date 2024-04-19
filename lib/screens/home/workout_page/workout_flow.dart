@@ -28,15 +28,46 @@ class _WorkoutFlowState extends State<WorkoutFlow> {
     exercises = widget.workout.exercises;
   }
 
-  void uploadImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        image = pickedFile;
-      });
-    }
+Future<void> getImage(ImageSource source) async {
+  final picker = ImagePicker();
+  final pickedFile = await picker.pickImage(source: source);
+  if (pickedFile != null) {
+    setState(() {
+      image = pickedFile;
+    });
   }
+}
+
+void uploadImage() {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.camera),
+              title: Text('Take a photo'),
+              onTap: () {
+                Navigator.pop(context);
+                getImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library),
+              title: Text('Choose from gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                getImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
