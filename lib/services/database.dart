@@ -561,4 +561,39 @@ class DatabaseService {
       'url': fileName,
     });
   }
+
+  Future<bool> deleteCompletedWorkout(String workoutId, String userId) async {
+    try {
+      // Delete the workout document from the "completedWorkouts" collection
+      DocumentReference userDocRef =
+          firestore.collection('completedWorkouts').doc(userId);
+      var userCompletedWorkoutsDoc = await userDocRef.get();
+      List workoutIDs = userCompletedWorkoutsDoc.get('workoutIDs');
+      List photoURLs = userCompletedWorkoutsDoc.get('photoURLs');
+
+      // Find the index of the workoutId in the array field
+      int index = workoutIDs.indexOf(workoutId);
+
+      // If the workoutId exists in the array field
+      if (index != -1) {
+        // Remove the workoutId from the array fields
+        workoutIDs.removeAt(index);
+        photoURLs.removeAt(index);
+
+        // Update the document with the modified arrays
+        await userDocRef.update({
+          'workoutIDs': workoutIDs,
+          'photoURLs': photoURLs,
+        });
+
+        return true;
+      } else {
+        // If the workoutId doesn't exist in the array field
+        return false;
+      }
+    } catch (e) {
+      // If an error occurs during deletion
+      return false;
+    }
+  }
 }

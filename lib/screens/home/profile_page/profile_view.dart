@@ -32,6 +32,7 @@ class _ProfileViewState extends State<ProfileView> {
   Future<void> _refreshData() async {
     setState(() {
       _userDataFuture = DatabaseService().getAtlasUser(widget.userID);
+      _userWorkoutFuture = _getUserWorkouts(widget.userID); // Refresh workouts
     });
   }
 
