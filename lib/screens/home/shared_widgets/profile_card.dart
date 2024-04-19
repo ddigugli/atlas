@@ -2,6 +2,7 @@ import 'package:atlas/models/workout.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'detailed_workout_page.dart';
+import 'package:atlas/services/database.dart';
 
 /* A card widget that displays information about a completed workout. */
 class ProfileCard extends StatelessWidget {
@@ -15,6 +16,9 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Instantiate Database Service
+    final db = DatabaseService();
+
     /* Calculate the time difference between the current time and the time the workout was completed */
     final DateTime now = DateTime.now();
     final DateTime timestampDate = workout.completedTime.toDate();
@@ -43,8 +47,7 @@ class ProfileCard extends StatelessWidget {
     }
 
     return Card(
-      color:
-          const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
+      color: const Color.fromARGB(255, 35, 35, 35), //CHANGE BACKGROUND COLOR HERE
       child: ListTile(
         onTap: () {
           Navigator.push(
@@ -82,6 +85,35 @@ class ProfileCard extends StatelessWidget {
                 ],
               )
             : Container(),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Delete Workout'),
+                  content: const Text('Are you sure you want to delete this workout?'),
+                  actions: [
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Delete'),
+                      onPressed: () {
+                        db.deleteCompletedWorkout(workout.workoutID, workout.createdBy.uid);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
