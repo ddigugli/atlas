@@ -8,7 +8,7 @@ class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<SearchPage> createState() =>F _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
@@ -40,10 +40,15 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Find Friends, Workouts, and Groups',
-          style: Theme.of(context).textTheme.titleLarge,
+        title: const Center(
+          child: Text(
+            'Find Friends and Workouts',
+            style: TextStyle(
+              color: Color.fromARGB(255, 143, 197, 255),
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+            ),
+          ),
         ),
       ),
       body: Column(
